@@ -1,0 +1,38 @@
+-delta is in miliseconds
+-puede haber problemas si los delta son grandes
+-recordar checkear por alive antes de hacer updateLogic en el director
+-investigar sortDirection en phaser.physics.arcade.world.js para collide
+
+IMPORTANTE: mover en dentro de los modelos todo lo posible a prototipos/constantes,
+para que al clonar no ocupe mucha memoria. Por ejemplo, el constructor de Plane
+agrega (agregaba, ya lo cambie) en CADA PLANE todos los atributos, cuando la
+mayoria son constantes y podrian estar en un lugar unico.
+
+Frame rate:
+	Ver que frameRate es aceptable para que no fallen las colisiones (cambiando game.minFrameTime)
+	Si el juego se enlentece (para despues de agregar colisiones):
+		-Probar cambiar entre las funciones de Game: playInput, playInput2 y playInput3
+		-Ver cual funciona mejor, probando con distintos minFrameTime para cada una
+
+Done:
+	GameObject
+	Bullet
+	Actor
+	Mob
+	Player
+	Enemy(flying)
+	Flying Mobs
+	Shoot (necesita verificacion de que funciona despues de quitar el window.setTimeout)
+
+TODO:
+	SI SE PARA EL JUEGO (ej en el debugger) SPAWNEA UNA ARMADA DE BICHOS (y es glorioso)
+	capaz que mover el updatePosition dentro del updateLogic (ya me olvide de ponerlo muchas veces)
+	Models:
+		cambiar:
+			Player - no tiene aceleracion
+			Collectible - separar modelo y controlador
+			Turret - separar modelo y controlador
+			Stage - agregar funcion de clonacion
+			BORRAR LAS NUBES POR SIEMPRE
+		nuevos:
+			SpawnManager
