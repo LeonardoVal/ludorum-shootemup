@@ -10,6 +10,7 @@
 function Enemy(stage) {
 	// Call parent constructor
 	exports.Mob.call(this, stage);
+	this.faction = "Enemy"
 	this.shoots = [];
 }
 
@@ -29,8 +30,7 @@ Enemy.prototype.shootConfig = {};
 
 Enemy.prototype.updateLogic = function(delta){
 	// Call the parent update function
-	exports.Mob.prototype.updateLogic.call(this);
-	this.updatePosition(delta); // TODO ver si deberia ir aca o despues de disparar (creo que da lo mismo)
+	exports.Mob.prototype.updateLogic.call(this, delta);
 	this.shoots.forEach(function(shoot) {
 		shoot.updateLogic(delta);
 	});
@@ -41,7 +41,7 @@ Enemy.prototype.updateLogic = function(delta){
 	var canShoot =
 		this.alive && 	// Enemy is alive
 		this.stage.player.alive && 	// Player is alive
-		this.y < this.stage.player.y - 100 * CONFIG.PIXEL_RATIO && // Enemy above player
+		this.position[1] < this.stage.player.position[1] - 100 * CONFIG.PIXEL_RATIO && // Enemy above player
 		this.stage.enemyBulletPools[this.bulletType].find(function(bullet){return !bullet.alive}); // Bullets in pool
 	if (canShoot){
 		this.shoot(this.shootConfig);
@@ -84,13 +84,13 @@ Enemy.prototype.revive = function () {
 		max = CONFIG.WORLD_WIDTH * 24 * CONFIG.PIXEL_RATIO - 16;
 		// spawn at a random location top of the screen
 		// random int between min and max
-		this.x = Math.floor(Math.random() * (max - min + 1) + min); // FIXME remove randomness
-		this.y = -32;
-		this.vy = (this.speed + this.stage.scrollSpeed) * CONFIG.PIXEL_RATIO;
+		this.position[0] = Math.floor(Math.random() * (max - min + 1) + min); // FIXME remove randomness
+		this.position[1] = -32;
+		this.velocity[1] = (this.speed + this.stage.scrollSpeed) * CONFIG.PIXEL_RATIO;
 	} else { // FIXME sacar reset/body
 		// spawn at a random location top of the screen, aligned with ground grid
 		this.reset((this.game.rnd.integerInRange(1, CONFIG.WORLD_WIDTH) - 0.5) * 24 * CONFIG.PIXEL_RATIO, - 32);
-		this.body.velocity.y = this.stage.scrollSpeed * CONFIG.PIXEL_RATIO;
+		this.body.velocity.position[1] = this.stage.scrollSpeed * CONFIG.PIXEL_RATIO;
 	}
 	min = 0;
 	max = this.shootDelay;
@@ -104,8 +104,8 @@ Enemy.prototype.loot = function(type) {
 	return; // TODO arreglar y habilitar esto
 	var bonus = this.state.stage.bonuses.getFirstExists(false);
 	bonus.updateClass();
-	bonus.reset(this.x, this.y);
-	bonus.body.velocity.y = 40 * CONFIG.PIXEL_RATIO;
+	bonus.reset(this.position[0], this.position[1]);
+	bonus.body.velocity.position[1] = 40 * CONFIG.PIXEL_RATIO;
 	bonus.body.angularVelocity = 30;
 	type = type; // ?????????
 };

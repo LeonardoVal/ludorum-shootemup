@@ -93,7 +93,7 @@ Game.prototype = {
 	},
 
 	preplayInput: function(input){
-		if (input.w) {
+		if (input.w || input.e) {
 			this.statePreplay2Play();
 		}
 	},
@@ -111,6 +111,8 @@ Game.prototype = {
 
 	nextFrameDelay: 0,
 
+	slow: 1,
+
 	// Basico: No interpola ni soluciona la perdida de foco, pero funciona
 	playInput: function(input, delta){
 		if (input.e){
@@ -125,10 +127,18 @@ Game.prototype = {
 		}
 		this.realElapsedTime += delta;
 		var logicDelta = delta;
-		if (input.space){
-			logicDelta = logicDelta / 2;
+
+		if (input.f){
+			this.slow -= delta/250;
+			if (this.slow < 0.5){
+				this.slow = 0.5;
+			}
 		}
-		this.director.next(logicDelta, input);
+		this.slow += delta/500;
+		if (this.slow > 1){
+			this.slow = 1;
+		}
+		this.director.next(logicDelta*this.slow, input);
 	},
 
 	statePlay2Postplay: function () {
@@ -150,8 +160,8 @@ Game.prototype = {
 		this.lastUpdate = this.game.time.now;
 
 		// DEBUG
-		// this.game.debug.text("Frame Time   : "+this.delta
-		// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 32);
+		this.game.debug.text("Frame Time   : "+this.delta
+		, 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 32);
 		// this.game.debug.text("Director Time: "+this.director.elapsedTime
 		// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 16);
 		// this.game.debug.text("Real Time    : "+this.realElapsedTime
@@ -178,7 +188,6 @@ Game.prototype = {
 	    w: this.input.keyboard.isDown(Phaser.Keyboard.W),
 	    f: this.input.keyboard.isDown(Phaser.Keyboard.F),
 	    e: this.input.keyboard.isDown(Phaser.Keyboard.E),
-	    space: this.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR),
 	    up: this.cursors.up.isDown,
 	    right: this.cursors.right.isDown,
 	    left: this.cursors.left.isDown,

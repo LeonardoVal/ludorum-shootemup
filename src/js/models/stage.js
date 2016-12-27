@@ -1,4 +1,6 @@
 function Stage() {
+	this.world = new p2.World();
+	this.world.applyGravity = false;
 	this.player = null;
 	this.enemyBulletPools = null;
 	this.bonuses = null;
@@ -38,6 +40,7 @@ Stage.prototype = {
 
 	createPlayer: function(){
 		this.player = new exports.Player(this);
+		this.world.addBody(this.player);
 	},
 
 	createEnemies: function () {

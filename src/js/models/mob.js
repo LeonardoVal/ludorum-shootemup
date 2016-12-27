@@ -14,8 +14,8 @@ function Mob(stage) {
 	Actor.call(this, stage);
 	// Mob properties
 	this.alive = true;
-	this.health = 100;
-	this.maxHealth = this.health;
+	this.health = 10;
+	this.maxHealth = this.maxHealth ? this.maxHealth : this.health;
 	this.isDamaged = false;
 	this.damageBlinkDuration = 0;
 	this.tint = 0xffffff;
@@ -27,7 +27,7 @@ Mob.prototype.constructor = Mob;
 Mob.prototype.updateLogic = function(delta) {
 	Actor.prototype.updateLogic.call(this, delta);
 	// Kill mob if outside stage
-	if (this.stage.isBelowScreen(this.y)) {
+	if (this.stage.isBelowScreen(this.position[1])) {
 		this.die();
 		return;
 	}
@@ -60,11 +60,12 @@ Mob.prototype.takeDamage = function (damage) {
 
 Mob.prototype.blink = function () {
 	this.isDamaged = true;
-	this.damageBlinkDuration = 250; // 0.25 seconds
+	this.damageBlinkDuration = 100; // 0.1 seconds
 };
 
 Mob.prototype.revive = function () {
 	this.health = this.maxHealth;
+	this.stage.world.addBody(this);
 	this.alive = true;
 	this.exists = true;
 	this.visible = true;
@@ -73,6 +74,7 @@ Mob.prototype.revive = function () {
 
 Mob.prototype.die = function () {
 	this.health = 0;
+	this.stage.world.removeBody(this);
 	this.alive = false;
 	this.exists = false;
 	this.visible = false;

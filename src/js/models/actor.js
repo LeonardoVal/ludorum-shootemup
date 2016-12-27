@@ -19,13 +19,9 @@ Actor.prototype = Object.create(GameObject.prototype);
 Actor.prototype.constructor = Actor;
 
 Actor.prototype.updateLogic = function(delta){
-	
+
 };
 
 Actor.prototype.getAngleTo = function(gameObject){
-	var angle;
-	if (gameObject.x || gameObject.y){ // FIXME
-		angle = Math.atan2(gameObject.x - this.x, gameObject.y - this.y);
-	}
-	return angle;
+ 	return Math.atan2(gameObject.position[0] - this.position[0], gameObject.position[1] - this.position[1]);
 };

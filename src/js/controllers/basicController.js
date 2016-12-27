@@ -21,8 +21,8 @@ SpriteController.prototype = Object.create(Phaser.Sprite.prototype);
 SpriteController.prototype.constructor = SpriteController;
 
 SpriteController.prototype.update = function update(){
-  this.x = this.gameObject.x;
-  this.y = this.gameObject.y;
+  this.x = this.gameObject.position[0];
+  this.y = this.gameObject.position[1];
   this.alive = this.gameObject.alive;
   this.exists = this.gameObject.exists;
   this.visible = this.gameObject.visible;

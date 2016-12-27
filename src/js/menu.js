@@ -17,7 +17,7 @@ Menu.prototype = {
 		this.titleTxt.y = this.titleTxt.y - this.titleTxt.height * 2 + 5;
 
 		y = y + this.titleTxt.height + 5;
-		this.startTxt = this.add.bitmapText(x, y, 'minecraftia', '_______________\nControls\nW : shoot / start\nArrows : move\nSpacebar : slow\n_______________');
+		this.startTxt = this.add.bitmapText(x, y, 'minecraftia', '_______________\nControls\nW : shoot / start\nArrows : move\nF : bullet time\n_______________');
 		this.startTxt.align = 'center';
 		this.startTxt.x = this.game.width / 2 - this.startTxt.textWidth / 2;
 
