@@ -32,7 +32,8 @@ module.exports = function(grunt) {
           {expand: true, cwd: "src/", src: ['css/**'], dest: 'build/'},
           {expand: true, cwd: "src/", src: ['index.html'], dest: 'build/'},
           {expand: true, cwd: "node_modules/phaser/build/", src: ['phaser.js'], dest: 'build/js/'},
-          {expand: true, cwd: "node_modules/phaser/build/", src: ['phaser.map'], dest: 'build/js/'}
+          {expand: true, cwd: "node_modules/phaser/build/", src: ['phaser.map'], dest: 'build/js/'},
+          {expand: true, cwd: "node_modules/p2/build/", src: ['p2.js'], dest: 'build/js/'}
         ]
       }
     },

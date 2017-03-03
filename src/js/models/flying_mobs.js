@@ -13,6 +13,10 @@ function Plane(stage) {
 	// random int between 0 and 7
 	this.planeClass = Math.floor(Math.random() * (7 - 0 + 1) + 0);
 	this.queueAnimation('idle'+this.planeClass);
+	this.removeShape(this.shape);
+	this.shape = new p2.Convex({ vertices: [[0,50], [-25,0], [25,0]]});
+	this.shape.sensor = true;
+	this.addShape(this.shape);
 }
 
 Plane.prototype = Object.create(exports.Enemy.prototype);
@@ -113,7 +117,7 @@ Flagship.prototype = Object.create(exports.Enemy.prototype);
 Flagship.prototype.constructor = Flagship;
 
 Flagship.prototype.image = 'mob_flagship_1';
-Flagship.prototype.maxHealth = 750;
+Flagship.prototype.maxHealth = 300;
 Flagship.prototype.speed = 10;
 Flagship.prototype.shootDelay = 3000;
 Flagship.prototype.points = 2000;

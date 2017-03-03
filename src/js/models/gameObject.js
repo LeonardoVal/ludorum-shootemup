@@ -1,16 +1,13 @@
 // Maneja las posiciones de los "objetos" (todo basicamente)
 
 var GameObject = exports.GameObject = function GameObject(){
-	this.x = 0;
-	this.y = 0;
-	this.vx = 0;
-	this.vy = 0;
+	p2.Body.call(this, {mass: 100});
+	this.shape = new p2.Circle({ radius: 18});
+	this.shape.sensor = true;
+	this.addShape(this.shape);
 };
 
-GameObject.prototype.updatePosition = function updatePosition(delta){
-	this.x += this.vx * delta / 1000;
-	this.y += this.vy * delta / 1000;
-};
+GameObject.prototype = Object.create(p2.Body.prototype);
 
 GameObject.prototype.phaserAnimInterface = {
 	addAnimation: function addAnimation(name, frames, frameRate, loop, useNumericIndex){

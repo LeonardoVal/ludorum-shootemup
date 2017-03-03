@@ -13,6 +13,7 @@
 function Player(stage){
 	exports.Mob.call(this, stage);
 
+	this.faction = "Player";
 	this.playerClass = Math.floor(Math.random()*4+1);
 	this.playerStats = CONFIG.CLASS_STATS[this.playerClass - 1];
 	this.classStats = this.playerStats;
@@ -20,6 +21,7 @@ function Player(stage){
 	this.setInitialPosition();
 	this.queueAnimation("idle");
 
+	this.score = 0;
 	this.health = this.playerStats.health;
 	this.calculateStats();
 	this.nextShotDelay = 0;
@@ -42,8 +44,8 @@ Player.prototype.addAnimation('right', [ 3 ], 5, true);
 Player.prototype.addAnimation('right_full', [ 4 ], 5, true);
 
 Player.prototype.setInitialPosition = function() {
-	this.x = this.stage.width / 2;
-	this.y = this.stage.height / 4 * 3;
+	this.position[0] = this.stage.width / 2;
+	this.position[1] = this.stage.height / 4 * 3;
 };
 
 Player.prototype.updateLogic = function(delta, input) {
@@ -64,22 +66,21 @@ Player.prototype.calculateStats = function () {
 Player.prototype.updateFromInput = function (delta, input) {
 	var isDown = input;
 	// Move (horizontal)
-	if (isDown.left && this.x > 20 * CONFIG.PIXEL_RATIO) {
+	if (isDown.left && this.position[0] > 20 * CONFIG.PIXEL_RATIO) {
 		this.moveLeft(delta);
-	} else if (isDown.right && this.x < (CONFIG.WORLD_WIDTH * 24 - 20) * CONFIG.PIXEL_RATIO) {
+	} else if (isDown.right && this.position[0] < (CONFIG.WORLD_WIDTH * 24 - 20) * CONFIG.PIXEL_RATIO) {
 		this.moveRight(delta);
 	} else {
 		this.floatH(delta);
 	}
 	// Move (vertical)
-	if (isDown.up && this.y > 30 * CONFIG.PIXEL_RATIO) {
+	if (isDown.up && this.position[1] > 30 * CONFIG.PIXEL_RATIO) {
 		this.moveUp(delta);
-	} else if (isDown.down && this.y < (CONFIG.GAME_HEIGHT - 20) * CONFIG.PIXEL_RATIO) {
+	} else if (isDown.down && this.position[1] < (CONFIG.GAME_HEIGHT - 20) * CONFIG.PIXEL_RATIO) {
 		this.moveDown(delta);
 	} else {
 		this.floatV(delta);
 	}
-	this.updatePosition(delta);
 	// Fire
 	this.nextShotDelay -= delta;
 	if (isDown.w) {
@@ -94,7 +95,7 @@ Player.prototype.updateFromInput = function (delta, input) {
 };
 
 Player.prototype.updateAnimation = function () {
-	var spd = this.vx;
+	var spd = this.velocity[0];
 	if (spd < - this.speed / 4 * 3) {
 		this.queueAnimation('left_full');
 	} else if (spd > this.speed / 4 * 3) {
@@ -109,57 +110,57 @@ Player.prototype.updateAnimation = function () {
 };
 
 Player.prototype.moveLeft = function (delta) {
-	this.vx -= this.accel * delta;
-	if (this.vx < -this.speed) {
-		this.vx = -this.speed;
+	this.velocity[0] -= this.accel * delta;
+	if (this.velocity[0] < -this.speed) {
+		this.velocity[0] = -this.speed;
 	}
 };
 
 Player.prototype.moveRight = function (delta) {
-	this.vx += this.accel * delta;
-	if (this.vx > this.speed) {
-		this.vx = this.speed;
+	this.velocity[0] += this.accel * delta;
+	if (this.velocity[0] > this.speed) {
+		this.velocity[0] = this.speed;
 	}
 };
 
 Player.prototype.moveUp = function (delta) {
-	this.vy -= this.accel * delta;
-	if (this.vy < - this.speed) {
-		this.vy = - this.speed;
+	this.velocity[1] -= this.accel * delta;
+	if (this.velocity[1] < - this.speed) {
+		this.velocity[1] = - this.speed;
 	}
 };
 
 Player.prototype.moveDown = function (delta) {
-	this.vy += this.accel * delta;
-	if (this.vy > this.speed) {
-		this.vy = this.speed;
+	this.velocity[1] += this.accel * delta;
+	if (this.velocity[1] > this.speed) {
+		this.velocity[1] = this.speed;
 	}
 };
 
 Player.prototype.floatH = function (delta) {
-	if (this.vx > 0) {
-		this.vx -= this.accel * delta;
-		if (this.vx < 0) {
-			this.vx = 0;
+	if (this.velocity[0] > 0) {
+		this.velocity[0] -= this.accel * delta;
+		if (this.velocity[0] < 0) {
+			this.velocity[0] = 0;
 		}
 	} else {
-		this.vx += this.accel * delta;
-		if (this.vx > 0) {
-			this.vx = 0;
+		this.velocity[0] += this.accel * delta;
+		if (this.velocity[0] > 0) {
+			this.velocity[0] = 0;
 		}
 	}
 };
 
 Player.prototype.floatV = function (delta) {
-	if (this.vy > 0) {
-		this.vy -= this.accel * delta;
-		if (this.vy < 0) {
-			this.vy = 0;
+	if (this.velocity[1] > 0) {
+		this.velocity[1] -= this.accel * delta;
+		if (this.velocity[1] < 0) {
+			this.velocity[1] = 0;
 		}
 	} else {
-		this.vy += this.accel * delta;
-		if (this.vy > 0) {
-			this.vy = 0;
+		this.velocity[1] += this.accel * delta;
+		if (this.velocity[1] > 0) {
+			this.velocity[1] = 0;
 		}
 	}
 };
@@ -173,12 +174,15 @@ Player.prototype.fire = function(){
 	// y que no dependa de que delta random que decidio poner js
 	this.nextShotDelay = this.shootDelay + this.nextShotDelay;
 	var bullet = this.bulletPool.find(function(bullet) { return bullet.exists === false });
+	this.stage.world.addBody(bullet);
 	bullet.alive = true;
 	bullet.exists = true;
 	bullet.visible = true;
-	bullet.x = this.x;
-	bullet.y = this.y - 20;
-	bullet.vy = -500 * CONFIG.PIXEL_RATIO;
+	bullet.position[0] = this.position[0];
+	bullet.position[1] = this.position[1] - 20;
+	bullet.velocity[1] = -500 * CONFIG.PIXEL_RATIO;
+	bullet.shooter = this;
+
 	// --
 	// TODO in calculateBulletAnim instead !!!
 	var f, s = this.strength;
@@ -192,12 +196,14 @@ Player.prototype.fire = function(){
 };
 
 Player.prototype.createBulletPool = function(){
+	// TODO move this pool to stage
 	this.bulletPool = [];
 	for(var i = 0; i < 100; i++){
 		var bullet = new Bullet(this.stage);
 		bullet.alive = false;
 		bullet.exists = false;
 		bullet.visible = false;
+		bullet.faction = "PlayerBullet";
 		this.bulletPool.push(bullet);
 	}
 	this.calculateBulletAnim();
@@ -207,7 +213,7 @@ Player.prototype.updateBullets = function() {
 	// PLAYER BULLETS
 	// (dunno why some hi-speed bullets stay alive outside of the screen / world)
 	this.bulletPool.filter(function(bullet){return bullet.alive || bullet.exists;}).forEach(function (bullet) {
-		if (bullet.y < -200) {
+		if (bullet.position[1] < -200) {
 			bullet.die();
 		}
 	});

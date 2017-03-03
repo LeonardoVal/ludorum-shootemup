@@ -25,7 +25,7 @@ Collectible.prototype.update = function () {
 	exports.Actor.prototype.update.call(this);
 
 	// Kill mob if below the screen
-	if (this.y > CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO + 200) {
+	if (this.position[1] > CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO + 200) {
 		this.kill();
 		return;
 	}

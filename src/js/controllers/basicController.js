@@ -4,7 +4,7 @@ var SpriteController = exports.SpriteController = function SpriteController(game
   this.state = state;
 	this.game = state.game;
 	// Call parent constructor
-	Phaser.Sprite.call(this, this.game, 0, 0, image);
+	Phaser.Sprite.call(this, this.game, 5, 5, image);
 	// Add the object to the game world
 	this.game.add.existing(this); // TODO averiguar por que al comentar esta linea el player es invisible
 	// Pure common things to ALL objects
@@ -21,8 +21,8 @@ SpriteController.prototype = Object.create(Phaser.Sprite.prototype);
 SpriteController.prototype.constructor = SpriteController;
 
 SpriteController.prototype.update = function update(){
-  this.x = this.gameObject.x;
-  this.y = this.gameObject.y;
+  this.x = this.gameObject.position[0];
+  this.y = this.gameObject.position[1];
   this.alive = this.gameObject.alive;
   this.exists = this.gameObject.exists;
   this.visible = this.gameObject.visible;
