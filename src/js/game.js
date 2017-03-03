@@ -6,7 +6,6 @@
 
 
 function Game() {
-	this.score = 0;
 	this.lastUpdate = 0;
 	this.delta = 0;
 
@@ -32,7 +31,6 @@ Game.prototype = {
 		this.input.onDown.add(this.onInputDown, this);
 		this.cursors = this.input.keyboard.createCursorKeys();
 		// --
-		this.score = 0;
 		this.createGUI();
 		// AUDIO
 		this.createAudio();
@@ -144,12 +142,12 @@ Game.prototype = {
 	statePlay2Postplay: function () {
 		this.gameState = this.STATE.postplay;
 		this.inputFunction = this.postplayInput;
-		this.guiText0.setText('Game over');
+		this.guiText0.setText('Game over' + '\n' + this.stage.player.score);
 	},
 
 	postplayInput: function(input){
 		if (input.w) {
-			this.game.start('menu');
+			this.game.state.start('menu');
 		}
 	},
 
@@ -168,6 +166,11 @@ Game.prototype = {
 		// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16);
 		// this.game.debug.text("Delta Time   : "+ (this.realElapsedTime - this.director.elapsedTime)
 		// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 + 16);
+		if (!this.stage.player.alive) {
+			this.statePlay2Postplay();
+		}
+
+		this.updateGUI();
 
 		return;
 		// TODO ver si se puede borrar esto (de aca todo para abajo)
@@ -181,6 +184,8 @@ Game.prototype = {
 		// this.updateCloudSpawn();
 		// Background
 		this.updateBackground(this.delta);
+
+		if (this.stage.player.health < 0) {this.game.start('menu');}
 	},
 
 	makeInputObject: function(){
@@ -271,7 +276,7 @@ Game.prototype = {
 		if (mob.health <= 0) {
 			mob.die();
 			this.explode(mob);
-			this.score += mob.points;
+			this.stage.player.score += mob.points;
 			this.updateGUI();
 		}
 	},
@@ -328,7 +333,7 @@ Game.prototype = {
 		gui += 'RAT ' + this.stage.player.playerStats.rate + '\n';
 		gui += 'SPD ' + this.stage.player.playerStats.speed + '\n';
 		gui += 'ACC ' + this.stage.player.playerStats.accel + '\n';
-		this.guiText1.setText(this.score + '');
+		this.guiText1.setText(this.stage.player.score + '');
 		this.guiText2.setText(gui);
 	},
 

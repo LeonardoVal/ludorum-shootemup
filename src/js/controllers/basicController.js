@@ -4,7 +4,7 @@ var SpriteController = exports.SpriteController = function SpriteController(game
   this.state = state;
 	this.game = state.game;
 	// Call parent constructor
-	Phaser.Sprite.call(this, this.game, 0, 0, image);
+	Phaser.Sprite.call(this, this.game, 5, 5, image);
 	// Add the object to the game world
 	this.game.add.existing(this); // TODO averiguar por que al comentar esta linea el player es invisible
 	// Pure common things to ALL objects
