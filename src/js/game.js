@@ -160,6 +160,12 @@ Game.prototype = {
 		// TODO cambiar esto para que no se haga manualmente (como los otros controllers)
 		this.stageController.updateBackground();
 
+		if (!this.stage.player.alive) {
+			this.statePlay2Postplay();
+		}
+
+		this.updateGUI();
+
 		// DEBUG
 		this.game.debug.text("Frame Time   : "+this.delta
 		, 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 32);
