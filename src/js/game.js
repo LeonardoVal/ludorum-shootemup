@@ -159,6 +159,9 @@ Game.prototype = {
 		this.delta = delta / 1000; //in seconds
 		this.lastUpdate = this.game.time.now;
 
+		// TODO cambiar esto para que no se haga manualmente (como los otros controllers)
+		this.stageController.updateBackground();
+
 		// DEBUG
 		this.game.debug.text("Frame Time   : "+this.delta
 		, 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 32);
@@ -168,19 +171,6 @@ Game.prototype = {
 		// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16);
 		// this.game.debug.text("Delta Time   : "+ (this.realElapsedTime - this.director.elapsedTime)
 		// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 + 16);
-
-		return;
-		// TODO ver si se puede borrar esto (de aca todo para abajo)
-		if (this.gameState !== this.STATE.preplay) {
-			// Enemy spawn
-			this.updateEnemySpawn();
-		}
-		// Collisions
-		this.updateCollisions();
-		// Cloud spawn
-		// this.updateCloudSpawn();
-		// Background
-		this.updateBackground(this.delta);
 	},
 
 	makeInputObject: function(){
@@ -240,28 +230,6 @@ Game.prototype = {
 			cloud = this.stage.clouds.getFirstExists(false);
 			cloud.revive();
 		}
-	},
-
-	updateCollisions: function () {
-		var i;
-		// Flying enemies
-		for (i = 0; i < this.stage.mobPools.length; i++) {
-			// Player bullets VS ennemy mobs
-			this.physics.arcade.overlap(this.stage.player.bulletPool, this.stage.mobPools[i], this.bulletVSmob, null, this);
-			// Player VS ennemy mobs
-			this.physics.arcade.overlap(this.stage.player, this.stage.mobPools[i], this.playerVSmob, null, this);
-		}
-		// Ground enemies
-		for (i = 0; i < this.stage.mobPoolsGround.length; i++) {
-			// Player bullets VS ennemy mobs
-			this.physics.arcade.overlap(this.stage.player.bulletPool, this.stage.mobPoolsGround[i], this.bulletVSmob, null, this);
-		}
-		// Player VS ennemy bullets
-		for (i = 0; i < this.stage.enemyBulletPools.length; i++) {
-			this.physics.arcade.overlap(this.stage.enemyBulletPools[i], this.stage.player, this.playerVSbullet, null, this);
-		}
-		// Player VS bonuses
-		this.physics.arcade.overlap(this.stage.bonuses, this.stage.player, this.playerVSbonus, null, this);
 	},
 
 	bulletVSmob: function (bullet, mob) {
@@ -330,27 +298,6 @@ Game.prototype = {
 		gui += 'ACC ' + this.stage.player.playerStats.accel + '\n';
 		this.guiText1.setText(this.score + '');
 		this.guiText2.setText(gui);
-	},
-
-	updateBackground: function (delta) {
-		// SCROLLING
-		if (this.stage.player.isAlive) {
-			this.stage.scrollSpeed += CONFIG.SCROLL_ACCEL * delta / 60;	// Accelerate scrolling speed
-		}
-		if (this.stage.ground.y < 0 ) {	// Is camera still in the buffer zone ?
-			// Let's scroll the ground
-			this.stage.ground.y += this.stage.scrollSpeed * CONFIG.PIXEL_RATIO * delta;
-		} else {	// Camera has reached the edge of the buffer zone, next chunk of map
-			this.stage.scrollCounter += CONFIG.WORLD_SWAP_HEIGHT;
-			if (this.stage.scrollCounter > CONFIG.WORLD_HEIGHT) { // Has camera reached the end of the world ?
-				this.stage.scrollCounter = 0;
-			}
-			this.stage.drawGround();
-			if (this.gameState !== this.STATE.preplay) {
-				this.updateEnemySpawnGround();
-			}
-			this.stage.ground.y = - this.stage.scrollMax;
-		}
 	},
 
 	onInputDown: function () {

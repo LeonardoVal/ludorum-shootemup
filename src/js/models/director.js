@@ -57,6 +57,7 @@ Director.prototype = {
   next: function next(delta, input){
     this.elapsedTime += delta; // TODO ver si esto va aca o al final de next (afecta los spawns)
     this.updateEnemySpawn(delta); // TODO crear modelo "spawnManager" y mover esto ahi
+    this.updateBackground(delta); // TODO mover esto a otro lado (stage? o crear otro modelo)
     var stage = this.stage;
     stage.world.step(delta/1000);
     if (stage.player.alive) {
@@ -96,4 +97,23 @@ Director.prototype = {
       }
     }
   },
+
+  updateBackground: function (delta) {
+		// SCROLLING
+    var deltaSeconds = delta / 1000;
+		if (this.stage.player.alive) { // FIXME
+			this.stage.scrollSpeed += CONFIG.SCROLL_ACCEL * deltaSeconds * 20 / 60;	// Accelerate scrolling speed
+		}
+		if (this.stage.groundY < 0 ) {	// Is camera still in the buffer zone ?
+			// Let's scroll the ground
+			this.stage.groundY += this.stage.scrollSpeed * CONFIG.PIXEL_RATIO * deltaSeconds;
+		} else {	// Camera has reached the edge of the buffer zone, next chunk of map
+      this.stage.scrollCounter += CONFIG.WORLD_SWAP_HEIGHT;
+			if (this.stage.scrollCounter > CONFIG.WORLD_HEIGHT) { // Has camera reached the end of the world ?
+				this.stage.scrollCounter = 0;
+			}
+      this.stage.groundY = -this.stage.scrollMax;
+      this.stage.queuedToDraw = true;
+		}
+	},
 }

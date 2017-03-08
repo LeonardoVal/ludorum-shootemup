@@ -5,11 +5,6 @@
 SI SE PARA EL JUEGO (ej en el debugger, o minimizando) SPAWNEA UNA ARMADA DE BICHOS (y es glorioso)
 No lo veo como un problema igual, es algo fuera de los modelos y si se tiene cuidado no pasa.
 
-IMPORTANTE: mover en dentro de los modelos todo lo posible a prototipos/constantes,
-para que al clonar no ocupe mucha memoria. Por ejemplo, el constructor de Plane
-agrega (agregaba, ya lo cambie) en CADA PLANE todos los atributos, cuando la
-mayoria son constantes y podrian estar en un lugar unico.
-
 Frame rate:
 	Ver que frameRate es aceptable para que no fallen las colisiones (cambiando game.minFrameTime)
 	Si el juego se enlentece (para despues de agregar colisiones):

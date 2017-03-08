@@ -31,7 +31,7 @@ Stage.prototype = {
 
 	createAll: function(){
 		// TODO implementar
-		// this.createGround();
+		this.createGround();
 		// this.createClouds();
 		this.createEnemies();
 		// this.createBonuses();
@@ -113,35 +113,18 @@ Stage.prototype = {
 	},
 
 	createGround: function () {
-		this.map = this.game.add.tilemap();
-
-		if (CONFIG.DEBUG.tileset) {
-			this.map.addTilesetImage('tileset_1', 'tileset_1_debug', 24, 28, null, null, 0);
-		} else {
-			this.map.addTilesetImage('tileset_1', 'tileset_1', 24, 28, null, null, 0);
-		}
-
 		//  Creates a new blank layer and sets the map dimensions.
 		this.groundWidth = CONFIG.WORLD_WIDTH;
 		this.groundHeight = Math.round(CONFIG.GAME_HEIGHT / 28) + 1 + CONFIG.WORLD_SWAP_HEIGHT;
 
-		// this.ground = map.create('layer0', CONFIG.WORLD_WIDTH, CONFIG.WORLD_HEIGHT, 24, 28);
-		this.ground = this.map.create('layer0', this.groundWidth, this.groundHeight, 24, 28);
-		this.ground.fixedToCamera = false;
-		this.ground.scale.setTo(CONFIG.PIXEL_RATIO, CONFIG.PIXEL_RATIO);
-		this.ground.scrollFactorX = 0.0000125; /// WTF ??? Layer seems to have double x scroll speed
-
-		console.log('Ground real size       : ' + this.ground.width + '/' + this.ground.height);
 		console.log('Ground logic size      : ' + this.groundWidth + '/' + this.groundHeight);
 
 		// this.scrollMax = Math.round((this.ground.height - this.game.camera.height) / 28) * 28;
 		this.scrollMax = CONFIG.WORLD_SWAP_HEIGHT * CONFIG.PIXEL_RATIO * 28 - 1;
-		this.ground.y = - this.scrollMax;
+		this.groundY = -this.scrollMax;
 
 		this.terrainData = this.generateTerrain();
 		this.scrollCounter = 0;
-
-		this.drawGround();
 	},
 
 	generateTerrain: function () {
@@ -158,13 +141,24 @@ Stage.prototype = {
 			DEEPWATER: 	6 + 15 * 3
 		};
 
+		// BEGIN TEST (este codigo lo puse yo para generar un mapa manualmente)
+		for (i = 0; i < sizeX - 1; i++) {
+			map[i] = [];
+			for (j = 0; j < sizeY - 1; j++) {
+				// map[i][j] = Math.floor(Math.random() * (50 - 0 + 1) + 0);
+				map[i][j] = TILE.EARTH;
+			}
+		}
+		return map;
+		// END TEST
+
 		var TILESTACK = [TILE.FORREST, TILE.EARTH, TILE.WATER, TILE.DEEPWATER];
 
 		// Populate
 		for (i = 0; i < sizeX; i++) {
 			map[i] = [];
 			for (j = 0; j < sizeY; j++) {
-				map[i][j] = this.game.rnd.between(0, 99999);
+				map[i][j] = Math.floor(Math.random() * (99999 - 0 + 1) + 0);
 				// map[i][j] = this.game.rnd.between(0, 90000);
 				// map[i][j] = 40000;	// Only sea
 			}
@@ -345,17 +339,6 @@ Stage.prototype = {
 		return mapFinal;
 	},
 
-	drawGround: function () {
-		for (var i = 0; i < CONFIG.WORLD_WIDTH; i++) {
-			for(var j = 0; j < this.groundHeight; j++) {
-				var rowOffset = CONFIG.WORLD_HEIGHT - (this.groundHeight + this.scrollCounter) + j;
-				if (rowOffset < 0) {
-					rowOffset += CONFIG.WORLD_HEIGHT;
-				}
-				this.map.putTile(this.terrainData[i][rowOffset],i,j,this.ground);
-			}
-		}
-	},
 };
 
 exports.Stage = Stage;
