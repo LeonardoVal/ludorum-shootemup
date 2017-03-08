@@ -72,16 +72,21 @@ Director.prototype = {
   next: function next(delta, input){
     this.elapsedTime += delta; // TODO ver si esto va aca o al final de next (afecta los spawns)
     this.updateEnemySpawn(delta); // TODO crear modelo "spawnManager" y mover esto ahi
+    this.updateBackground(delta); // TODO mover esto a otro lado (stage? o crear otro modelo)
     var stage = this.stage;
+    // Physics
     stage.world.step(delta/1000);
+    // Player ship
     if (stage.player.alive) {
       stage.player.updateLogic(delta, input);
     }
+    // Player bullets
     stage.player.bulletPool.forEach(function(bullet){
       if (bullet.alive && bullet.exists){
         bullet.updateLogic(delta);
       }
     });
+    // Enemy bullets
     stage.enemyBulletPools.forEach(function(pool){
       pool.forEach(function(bullet){
         if (bullet.alive && bullet.exists){
@@ -89,6 +94,7 @@ Director.prototype = {
         }
       },this);
     },this);
+    // Enemy (flying)
     stage.mobPools.forEach(function(pool){
       pool.forEach(function(enemy){
         if (enemy.alive && enemy.exists){
@@ -96,10 +102,22 @@ Director.prototype = {
         }
       },this);
     },this);
-    // TODO ground enemies
+    // Enemy (ground)
+    stage.mobPoolsGround.forEach(function(pool){
+      pool.forEach(function(enemy){
+        if (enemy.alive && enemy.exists){
+          enemy.updateLogic(delta);
+        }
+      },this);
+    },this);
   },
 
   updateEnemySpawn: function(delta){
+    this.updateFlyingEnemySpawn(delta);
+    this.updateGroundEnemySpawn(delta);
+  },
+
+  updateFlyingEnemySpawn: function(delta){
     var enemy, i;
     for (i = 0; i < this.stage.mobPools.length; i++) {
       if (this.stage.nextEnemyAt[i] < this.elapsedTime
@@ -111,4 +129,36 @@ Director.prototype = {
       }
     }
   },
+
+  updateGroundEnemySpawn: function(delta){
+    var enemy, i;
+    for (i = 0; i < this.stage.mobPoolsGround.length; i++) {
+      if (this.stage.nextGroundEnemyAt[i] < this.elapsedTime
+      && this.stage.mobPoolsGround[i].find(function(m) { return !m.alive })) {
+        // this.stage.nextGroundEnemyAt[i] = this.elapsedTime + this.stage.enemyDelayGround[i]; // TODO ver cual de las dos es mejor
+        this.stage.nextGroundEnemyAt[i] = this.stage.nextGroundEnemyAt[i] + this.stage.enemyDelayGround[i];
+        enemy = this.stage.mobPoolsGround[i].find(function(mob){return mob.exists === false});
+        enemy.revive();
+      }
+    }
+  },
+
+  updateBackground: function (delta) {
+		// SCROLLING
+    var deltaSeconds = delta / 1000;
+		if (this.stage.player.alive) { // FIXME
+			this.stage.scrollSpeed += CONFIG.SCROLL_ACCEL * deltaSeconds * 20 / 60;	// Accelerate scrolling speed
+		}
+		if (this.stage.groundY < 0 ) {	// Is camera still in the buffer zone ?
+			// Let's scroll the ground
+			this.stage.groundY += this.stage.scrollSpeed * CONFIG.PIXEL_RATIO * deltaSeconds;
+		} else {	// Camera has reached the edge of the buffer zone, next chunk of map
+      this.stage.scrollCounter += CONFIG.WORLD_SWAP_HEIGHT;
+			if (this.stage.scrollCounter > CONFIG.WORLD_HEIGHT) { // Has camera reached the end of the world ?
+				this.stage.scrollCounter = 0;
+			}
+      this.stage.groundY = -this.stage.scrollMax;
+      this.stage.queuedToDraw = true;
+		}
+	},
 }

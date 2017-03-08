@@ -49,12 +49,6 @@ for (var i = 0; i < 8; i++){
 	Plane.prototype.addAnimation('right'+i, [offset + 2], 5, true);
 }
 
-// FIXME por que esta esto aca?
-Plane.prototype.update = function () {
-	// Call the parent update function
-	exports.Enemy.prototype.update.call(this);
-};
-
 
 /************************************************************************************************
  * VESSEL CLASS
@@ -92,12 +86,6 @@ Vessel.prototype.shootConfig = {
 
 Vessel.prototype.animations = [];
 Vessel.prototype.addAnimation('idle', [0], 5, true);
-
-// FIXME por que esta esto aca?
-Vessel.prototype.update = function () {
-	// Call the parent update function
-	exports.Enemy.prototype.update.call(this);
-};
 
 
 /************************************************************************************************
@@ -138,11 +126,6 @@ Flagship.prototype.shootConfig = {
 Flagship.prototype.animations = [];
 Flagship.prototype.addAnimation('idle', [0], 5, true);
 
-// FIXME por que esta esto aca?
-Flagship.prototype.update = function () {
-	// Call the parent update function
-	exports.Enemy.prototype.update.call(this);
-};
 
 // Export the objects
 exports.Plane = Plane;

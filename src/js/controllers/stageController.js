@@ -2,12 +2,21 @@ var StageController = exports.StageController = function StageController(stage, 
   this.state = state;
 	this.game = state.game;
   this.stage = stage;
+  this.createTilemap();
   this.createPlayerController();
   this.createPlayerBulletsControllers();
   this.createEnemyControllers();
 }
 
 StageController.prototype = {
+  updateBackground: function() {
+    if (this.stage.queuedToDraw) { // Camera has reached the edge of the buffer zone, next chunk of map
+			this.drawGround();
+      this.stage.queuedToDraw = false;
+		}
+    this.ground.y = this.stage.groundY;
+  },
+
   createPlayerController: function(){
     this.playerController = new PlayerController(this.stage.player, this.state);
 		this.game.camera.follow(this.playerController, Phaser.Camera.FOLLOW_PLATFORMER);
@@ -48,6 +57,44 @@ StageController.prototype = {
         this.flyingEnemies.add(new SpriteController(enemy, this.state, enemy.image));
       },this);
     },this);
-    // TODO ground enemies
+    this.groundEnemies = this.game.add.group();
+    this.stage.mobPoolsGround.forEach(function(pool){
+      pool.forEach(function(enemy){
+        this.groundEnemies.add(new SpriteController(enemy, this.state, enemy.image));
+      },this);
+    },this);
+  },
+
+  createTilemap: function() {
+    this.map = this.game.add.tilemap();
+
+    if (CONFIG.DEBUG.tileset) {
+      this.map.addTilesetImage('tileset_1', 'tileset_1_debug', 24, 28, null, null, 0);
+    } else {
+      this.map.addTilesetImage('tileset_1', 'tileset_1', 24, 28, null, null, 0);
+    }
+
+    // this.ground = map.create('layer0', CONFIG.WORLD_WIDTH, CONFIG.WORLD_HEIGHT, 24, 28);
+    this.ground = this.map.create('layer0', this.stage.groundWidth, this.stage.groundHeight, 24, 28);
+    this.ground.fixedToCamera = false;
+    this.ground.scale.setTo(CONFIG.PIXEL_RATIO, CONFIG.PIXEL_RATIO);
+    this.ground.scrollFactorX = 0.0000125; /// WTF ??? Layer seems to have double x scroll speed
+    this.ground.y = this.stage.groundY;
+
+    console.log('Ground real size       : ' + this.ground.width + '/' + this.ground.height);
+
+    this.drawGround();
+  },
+
+  drawGround: function () {
+    for (var i = 0; i < CONFIG.WORLD_WIDTH; i++) {
+			for(var j = 0; j < this.stage.groundHeight; j++) {
+				var rowOffset = CONFIG.WORLD_HEIGHT - (this.stage.groundHeight + this.stage.scrollCounter) + j;
+				if (rowOffset < 0) {
+					rowOffset += CONFIG.WORLD_HEIGHT;
+				}
+				this.map.putTile(this.stage.terrainData[i][rowOffset], i, j, this.ground);
+			}
+		}
   }
 }

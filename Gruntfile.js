@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 		'src/js/models/collectible.js',
 		'src/js/models/cloud.js',
     'src/js/controllers/stageController.js',
-    'src/js/controllers/basicController.js',
+    'src/js/controllers/spriteController.js',
     'src/js/controllers/playerController.js',
 		'src/js/game.js',
 		'src/js/main.js',
