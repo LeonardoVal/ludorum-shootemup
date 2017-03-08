@@ -63,9 +63,8 @@ Stage.prototype = {
 		// Mid bullets
 		this.enemyBulletPools[1] = fillGroupTied("Bullet", CONFIG.BULLETPOOL_SIZE_ENNEMY, 1);
 		// GROUND ENEMIES
-		// TODO
-		// this.mobPoolsGround = [];
-		// this.mobPoolsGround[0] = fillGroupTied("Turret", CONFIG.MOBPOOL_SIZE);
+		this.mobPoolsGround = [];
+		this.mobPoolsGround[0] = fillGroupTied("Turret", CONFIG.MOBPOOL_SIZE);
 		// FLYING ENEMIES
 		this.mobPools = [];
 		this.mobPools[0] = fillGroupTied("Plane", CONFIG.MOBPOOL_SIZE);
@@ -82,9 +81,9 @@ Stage.prototype = {
 		this.nextEnemyAt[2] = this.enemyDelay[2];
 		// DELAYS (ground)
 		this.enemyDelayGround = [];
-		this.nextEnemyGroundAt = [];
+		this.nextGroundEnemyAt = [];
 		this.enemyDelayGround[0] = 5000;
-		this.nextEnemyGroundAt[0] = this.enemyDelayGround[0];
+		this.nextGroundEnemyAt[0] = this.enemyDelayGround[0];
 	},
 
 	createBonuses: function(){

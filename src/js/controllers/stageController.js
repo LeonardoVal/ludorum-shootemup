@@ -57,7 +57,12 @@ StageController.prototype = {
         this.flyingEnemies.add(new SpriteController(enemy, this.state, enemy.image));
       },this);
     },this);
-    // TODO ground enemies
+    this.groundEnemies = this.game.add.group();
+    this.stage.mobPoolsGround.forEach(function(pool){
+      pool.forEach(function(enemy){
+        this.groundEnemies.add(new SpriteController(enemy, this.state, enemy.image));
+      },this);
+    },this);
   },
 
   createTilemap: function() {

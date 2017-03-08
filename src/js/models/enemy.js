@@ -88,9 +88,13 @@ Enemy.prototype.revive = function () {
 		this.position[1] = -32;
 		this.velocity[1] = (this.speed + this.stage.scrollSpeed) * CONFIG.PIXEL_RATIO;
 	} else { // FIXME sacar reset/body
-		// spawn at a random location top of the screen, aligned with ground grid
-		this.reset((this.game.rnd.integerInRange(1, CONFIG.WORLD_WIDTH) - 0.5) * 24 * CONFIG.PIXEL_RATIO, - 32);
-		this.body.velocity.position[1] = this.stage.scrollSpeed * CONFIG.PIXEL_RATIO;
+		min = 1;
+		max = CONFIG.WORLD_WIDTH;
+		// spawn at a random location top of the screen
+		// random int between min and max
+		this.position[0] = Math.floor(Math.random() * (max - min + 1) + min); // FIXME remove randomness
+		this.position[1] = -32;
+		this.velocity[1] = (this.speed + this.stage.scrollSpeed) * CONFIG.PIXEL_RATIO;
 	}
 	min = 0;
 	max = this.shootDelay;

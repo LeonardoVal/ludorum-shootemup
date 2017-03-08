@@ -185,6 +185,7 @@ Game.prototype = {
 	  }
 	},
 
+	// TODO ver esto
 	updateEnemySpawnGround: function () {
 		var enemy, i, j, k, delta;
 		delta = CONFIG.WORLD_SWAP_HEIGHT * 28 / this.stage.scrollSpeed;
