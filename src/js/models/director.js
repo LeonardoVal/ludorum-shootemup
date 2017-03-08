@@ -10,34 +10,49 @@ var Director = exports.Director = function Director(stage){
       var bullet = event.bodyA, mob = event.bodyB;
       bullet.die();
   		mob.takeDamage(stage.player.strength / 5);	// TODO: constant
-  		if (mob.health <= 0) {
-  			mob.die();
-  		}
+
+      if (mob.health <= 0) {
+        mob.die();
+        //this.explode(mob);
+        bullet.shooter.score += mob.points;
+      }
 		}
 		else if (event.bodyB.faction === "PlayerBullet" && event.bodyA.faction === "Enemy"){
       var bullet = event.bodyB, mob = event.bodyA;
       bullet.die();
   		mob.takeDamage(stage.player.strength / 5);	// TODO: constant
   		if (mob.health <= 0) {
-  			mob.die();
-  		}
+        mob.die();
+        //this.explode(mob);
+        bullet.shooter.score += mob.points;
+      }
 		}
 		else if (event.bodyA.faction === "Player" && event.bodyB.faction === "EnemyBullet"){
       var bullet = event.bodyB, player = event.bodyA;
       bullet.die();
       player.takeDamage(10);
-  		if (player.health <= 0) {
-  			player.die();
-  		}
 		}
 		else if (event.bodyB.faction === "Player" && event.bodyA.faction === "EnemyBullet"){
       var bullet = event.bodyA, player = event.bodyB;
       bullet.die();
       player.takeDamage(10);
-  		if (player.health <= 0) {
-  			player.die();
-  		}
 		}
+    else if (event.bodyB.faction === "Player" && event.bodyA.faction === "Enemy"){
+      var player = event.bodyB, mob = event.bodyA;
+      mob.die();
+      player.takeDamage(10);  // TODO: constant
+      if (player.health <= 0) {
+        player.die();
+      }
+    }
+    else if (event.bodyB.faction === "Enemy" && event.bodyA.faction === "Player"){
+      var player = event.bodyA, mob = event.bodyB;
+      mob.die();
+      player.takeDamage(10);  // TODO: constant
+      if (player.health <= 0) {
+        player.die();
+      }
+    }
 	});
 };
 

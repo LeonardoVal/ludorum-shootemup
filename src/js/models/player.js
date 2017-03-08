@@ -21,6 +21,7 @@ function Player(stage){
 	this.setInitialPosition();
 	this.queueAnimation("idle");
 
+	this.score = 0;
 	this.health = this.playerStats.health;
 	this.calculateStats();
 	this.nextShotDelay = 0;
@@ -180,6 +181,8 @@ Player.prototype.fire = function(){
 	bullet.position[0] = this.position[0];
 	bullet.position[1] = this.position[1] - 20;
 	bullet.velocity[1] = -500 * CONFIG.PIXEL_RATIO;
+	bullet.shooter = this;
+
 	// --
 	// TODO in calculateBulletAnim instead !!!
 	var f, s = this.strength;
