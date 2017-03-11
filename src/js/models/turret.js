@@ -61,7 +61,7 @@ Turret.prototype.revive = function (i, j) {
 	exports.Enemy.prototype.revive.call(this);
 };
 
-function animationStuff() {
+function animationStuff() { // FIXME
 	var animations = this.sprite.animations;
 
 	var preshoot = animations.add('pre-shoot', [0, 1, 2, 3, 4, 5, 6, 7, 8], 15, false);

@@ -124,7 +124,7 @@ Director.prototype = {
       && this.stage.mobPools[i].find(function(m) { return !m.alive })) {
         // this.stage.nextEnemyAt[i] = this.elapsedTime + this.stage.enemyDelay[i]; // TODO ver cual de las dos es mejor
         this.stage.nextEnemyAt[i] = this.stage.nextEnemyAt[i] + this.stage.enemyDelay[i];
-        enemy = this.stage.mobPools[i].find(function(mob){return mob.exists === false});
+        enemy = this.stage.mobPools[i].find(function(mob){ return mob.exists === false; });
         enemy.revive();
       }
     }
@@ -146,8 +146,8 @@ Director.prototype = {
   updateBackground: function (delta) {
 		// SCROLLING
     var deltaSeconds = delta / 1000;
-		if (this.stage.player.alive) { // FIXME
-			this.stage.scrollSpeed += CONFIG.SCROLL_ACCEL * deltaSeconds * 20 / 60;	// Accelerate scrolling speed
+		if (this.stage.player.alive && false) { // FIXME
+			this.stage.scrollSpeed += CONFIG.SCROLL_ACCEL * deltaSeconds / 60;	// Accelerate scrolling speed
 		}
 		if (this.stage.groundY < 0 ) {	// Is camera still in the buffer zone ?
 			// Let's scroll the ground

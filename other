@@ -20,14 +20,17 @@ Done:
 	Enemy(flying)
 	Flying Mobs
 	Shoot (necesita optimizarse y verificacion de que funciona despues de quitar el window.setTimeout)
+	Turret (faltan animaciones)
 
 TODO:
 	Models:
 		cambiar:
 			Player - no tiene aceleracion
 			Collectible - separar modelo y controlador
-			Turret - separar modelo y controlador
 			Stage - agregar funcion de clonacion
 			BORRAR LAS NUBES POR SIEMPRE
 		nuevos:
 			SpawnManager
+	Controllers:
+		cambiar:
+			Animaciones (explode, etc)
