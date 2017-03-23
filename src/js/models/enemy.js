@@ -64,10 +64,10 @@ Enemy.prototype.die = function () {
 		shoot.die(bulletCancel);
 	});
 	// Loot things
-	if (Math.random() < this.lootProbability) {
+	//if (Math.random() < this.lootProbability) {
 		console.log("loot");
 		this.loot(this.lootType);
-	}
+	//}
 	// Explosion sound
 	var s = this.maxHealth, f;
 	if (s < 80 ) { f = 1; }
@@ -105,13 +105,18 @@ Enemy.prototype.revive = function () {
 };
 
 Enemy.prototype.loot = function(type) {
-	return; // TODO arreglar y habilitar esto
-	var bonus = this.state.stage.bonuses.getFirstExists(false);
-	bonus.updateClass();
-	bonus.reset(this.position[0], this.position[1]);
-	bonus.body.velocity.position[1] = 40 * CONFIG.PIXEL_RATIO;
-	bonus.body.angularVelocity = 30;
-	type = type; // ?????????
+	var bonus = this.stage.bonuses.find(function(bonus){return !bonus.exists}) // Bonus pool
+	if (!bonus) {return}
+	bonus.exists = true;
+	bonus.alive = true;
+	bonus.visible = true;
+	this.stage.world.addBody(bonus);
+	//bonus.updateClass();
+	bonus.position[0] = this.position[0];
+	bonus.position[1] = this.position[1]
+	bonus.velocity[1] = (this.stage.scrollSpeed) * CONFIG.PIXEL_RATIO;
+	//bonus.body.angularVelocity = 30;
+	//type = type; // FIXME
 };
 
 

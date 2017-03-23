@@ -22,7 +22,7 @@ var Director = exports.Director = function Director(stage){
       bullet.die();
   		mob.takeDamage(stage.player.strength / 5);	// TODO: constant
   		if (mob.health <= 0) {
-        mob.die();
+        //mob.die();
         //this.explode(mob);
         bullet.shooter.score += mob.points;
       }
@@ -41,18 +41,28 @@ var Director = exports.Director = function Director(stage){
       var player = event.bodyB, mob = event.bodyA;
       mob.die();
       player.takeDamage(10);  // TODO: constant
-      if (player.health <= 0) {
-        player.die();
-      }
+      //if (player.health <= 0) {
+      //  player.die();
+      //}
     }
     else if (event.bodyB.faction === "Enemy" && event.bodyA.faction === "Player"){
       var player = event.bodyA, mob = event.bodyB;
       mob.die();
       player.takeDamage(10);  // TODO: constant
-      if (player.health <= 0) {
-        player.die();
-      }
+      //if (player.health <= 0) {
+      //  player.die();
+      //}
     }
+	else if (event.bodyA.faction === "Player" && event.bodyB.faction === "Bonus"){
+      var bonus = event.bodyB, player = event.bodyA;
+      bonus.die();
+	  player.collectUpgrade(bonus.bonusClass);
+		}
+	else if (event.bodyB.faction === "Player" && event.bodyA.faction === "Bonus"){
+      var bonus = event.bodyA, player = event.bodyB;
+      bonus.die();
+	  player.collectUpgrade(bonus.bonusClass);
+		}
 	});
 };
 
@@ -102,6 +112,12 @@ Director.prototype = {
         }
       },this);
     },this);
+	// Collectibles
+	stage.bonuses.forEach(function(bonus){
+      if (bonus.alive && bonus.exists){
+        bonus.updateLogic(delta);
+      }
+    });
     // Enemy (ground)
     stage.mobPoolsGround.forEach(function(pool){
       pool.forEach(function(enemy){

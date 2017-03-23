@@ -7,33 +7,31 @@
  *
  ************************************************************************************************/
 
-function Collectible(state, image) {
+function Collectible(stage, image) {
 
 	// Call parent constructor
-	exports.Actor.call(this, state, image);
-
-	this.alive = true;
-	this.updateClass();
+	exports.Actor.call(this, stage);
+	this.image = image;
+	this.faction = "Bonus";
+	this.bonusClass = Math.floor(Math.random() * (3 - 0 + 1) + 0);
+	//this.updateClass(); FIXME
 }
 
 Collectible.prototype = Object.create(exports.Actor.prototype);
 Collectible.prototype.constructor = Collectible;
 
-Collectible.prototype.update = function () {
+Collectible.prototype.updateLogic = function (delta) {
 
 	// Call parent update function
-	exports.Actor.prototype.update.call(this);
+	exports.Actor.prototype.updateLogic.call(this, delta);
 
 	// Kill mob if below the screen
 	if (this.position[1] > CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO + 200) {
-		this.kill();
-		return;
+		this.die();
 	}
 };
 
 Collectible.prototype.updateClass = function () {
-
-	this.bonusClass = this.state.rnd.integerInRange(0, 3);
 
 	// Ugly hack to skip the last spritesheet row (4 instead of 3)
 	var fakeClass = this.bonusClass;
@@ -45,6 +43,12 @@ Collectible.prototype.updateClass = function () {
 	this.sprite.play('idle');
 };
 
+Collectible.prototype.die = function () {
+	this.stage.world.removeBody(this);
+	this.alive = false;
+	this.exists = false;
+	this.visible = false;
+};
 
 // Export the object
 exports.Collectible = Collectible;

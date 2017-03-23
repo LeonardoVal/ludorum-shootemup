@@ -34,7 +34,7 @@ Stage.prototype = {
 		this.createGround();
 		// this.createClouds();
 		this.createEnemies();
-		// this.createBonuses();
+		this.createBonuses();
 		this.createPlayer();
 	},
 
@@ -88,12 +88,12 @@ Stage.prototype = {
 
 	createBonuses: function(){
 		this.bonuses = this.newGroup();
-
 		for (var i = 0; i < CONFIG.BONUSPOOL_SIZE; i++) {
-			var o = new exports.Collectible(this.state, 'bonus_cube');
-			this.bonuses.add(o.sprite);
-			o.sprite.exists = false;
-			o.sprite.alive = false;
+			var o = new exports.Collectible(this, 'bonus_cube');
+			this.bonuses.add(o);
+			o.exists = false;
+			o.alive = false;
+			o.visible = false;
 		}
 	},
 

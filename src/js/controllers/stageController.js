@@ -4,6 +4,7 @@ var StageController = exports.StageController = function StageController(stage, 
   this.stage = stage;
   this.createTilemap();
   this.createPlayerController();
+  this.createBonusControllers();
   this.createPlayerBulletsControllers();
   this.createEnemyControllers();
 }
@@ -65,6 +66,13 @@ StageController.prototype = {
     },this);
   },
 
+  createBonusControllers: function(){
+    this.bonuses = this.game.add.group();
+    this.stage.bonuses.forEach(function(bonus){
+		this.bonuses.add(new SpriteController(bonus, this.state, bonus.image));
+    },this);
+  },
+  
   createTilemap: function() {
     this.map = this.game.add.tilemap();
 
