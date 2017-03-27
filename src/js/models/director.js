@@ -6,13 +6,14 @@ var Director = exports.Director = function Director(stage){
 
   // TODO crear modelo CollisionManager y mover esto ahi
   this.stage.world.on("beginContact", function(event){
+    // bodyA.collide(bodyB) TODO masks
+    // bodyB.collide(bodyA)
 		if (event.bodyA.faction === "PlayerBullet" && event.bodyB.faction === "Enemy"){
       var bullet = event.bodyA, mob = event.bodyB;
       bullet.die();
   		mob.takeDamage(stage.player.strength / 5);	// TODO: constant
 
       if (mob.health <= 0) {
-        mob.die();
         //this.explode(mob);
         bullet.shooter.score += mob.points;
       }
@@ -22,7 +23,6 @@ var Director = exports.Director = function Director(stage){
       bullet.die();
   		mob.takeDamage(stage.player.strength / 5);	// TODO: constant
   		if (mob.health <= 0) {
-        //mob.die();
         //this.explode(mob);
         bullet.shooter.score += mob.points;
       }
@@ -41,27 +41,21 @@ var Director = exports.Director = function Director(stage){
       var player = event.bodyB, mob = event.bodyA;
       mob.die();
       player.takeDamage(10);  // TODO: constant
-      //if (player.health <= 0) {
-      //  player.die();
-      //}
     }
     else if (event.bodyB.faction === "Enemy" && event.bodyA.faction === "Player"){
       var player = event.bodyA, mob = event.bodyB;
       mob.die();
       player.takeDamage(10);  // TODO: constant
-      //if (player.health <= 0) {
-      //  player.die();
-      //}
     }
-	else if (event.bodyA.faction === "Player" && event.bodyB.faction === "Bonus"){
+    else if (event.bodyA.faction === "Player" && event.bodyB.faction === "Bonus"){
       var bonus = event.bodyB, player = event.bodyA;
       bonus.die();
-	  player.collectUpgrade(bonus.bonusClass);
+	    player.collectUpgrade(bonus.bonusClass);
 		}
-	else if (event.bodyB.faction === "Player" && event.bodyA.faction === "Bonus"){
+  	else if (event.bodyB.faction === "Player" && event.bodyA.faction === "Bonus"){
       var bonus = event.bodyA, player = event.bodyB;
       bonus.die();
-	  player.collectUpgrade(bonus.bonusClass);
+	    player.collectUpgrade(bonus.bonusClass);
 		}
 	});
 };
@@ -83,79 +77,22 @@ Director.prototype = {
     this.elapsedTime += delta; // TODO ver si esto va aca o al final de next (afecta los spawns)
     this.updateEnemySpawn(delta); // TODO crear modelo "spawnManager" y mover esto ahi
     this.updateBackground(delta); // TODO mover esto a otro lado (stage? o crear otro modelo)
-    var stage = this.stage;
     // Physics
-    stage.world.step(delta/1000);
-    // Player ship
-    if (stage.player.alive) {
-      stage.player.updateLogic(delta, input);
-    }
-    // Player bullets
-    stage.player.bulletPool.forEach(function(bullet){
-      if (bullet.alive && bullet.exists){
-        bullet.updateLogic(delta);
+    this.stage.world.step(delta/1000);
+    // updateLogic of basic gameObjects
+    this.stage.forEach(function (gameObject) {
+      if (gameObject.alive && gameObject.exists){
+        gameObject.updateLogic(delta, input);
       }
     });
-    // Enemy bullets
-    stage.enemyBulletPools.forEach(function(pool){
-      pool.forEach(function(bullet){
-        if (bullet.alive && bullet.exists){
-          bullet.updateLogic(delta);
-        }
-      },this);
-    },this);
-    // Enemy (flying)
-    stage.mobPools.forEach(function(pool){
-      pool.forEach(function(enemy){
-        if (enemy.alive && enemy.exists){
-          enemy.updateLogic(delta);
-        }
-      },this);
-    },this);
-	// Collectibles
-	stage.bonuses.forEach(function(bonus){
-      if (bonus.alive && bonus.exists){
-        bonus.updateLogic(delta);
-      }
-    });
-    // Enemy (ground)
-    stage.mobPoolsGround.forEach(function(pool){
-      pool.forEach(function(enemy){
-        if (enemy.alive && enemy.exists){
-          enemy.updateLogic(delta);
-        }
-      },this);
-    },this);
   },
 
-  updateEnemySpawn: function(delta){
-    this.updateFlyingEnemySpawn(delta);
-    this.updateGroundEnemySpawn(delta);
-  },
-
-  updateFlyingEnemySpawn: function(delta){
-    var enemy, i;
-    for (i = 0; i < this.stage.mobPools.length; i++) {
-      if (this.stage.nextEnemyAt[i] < this.elapsedTime
-      && this.stage.mobPools[i].find(function(m) { return !m.alive })) {
-        // this.stage.nextEnemyAt[i] = this.elapsedTime + this.stage.enemyDelay[i]; // TODO ver cual de las dos es mejor
-        this.stage.nextEnemyAt[i] = this.stage.nextEnemyAt[i] + this.stage.enemyDelay[i];
-        enemy = this.stage.mobPools[i].find(function(mob){ return mob.exists === false; });
-        enemy.revive();
-      }
-    }
-  },
-
-  updateGroundEnemySpawn: function(delta){
-    var enemy, i;
-    for (i = 0; i < this.stage.mobPoolsGround.length; i++) {
-      if (this.stage.nextGroundEnemyAt[i] < this.elapsedTime
-      && this.stage.mobPoolsGround[i].find(function(m) { return !m.alive })) {
-        // this.stage.nextGroundEnemyAt[i] = this.elapsedTime + this.stage.enemyDelayGround[i]; // TODO ver cual de las dos es mejor
-        this.stage.nextGroundEnemyAt[i] = this.stage.nextGroundEnemyAt[i] + this.stage.enemyDelayGround[i];
-        enemy = this.stage.mobPoolsGround[i].find(function(mob){return mob.exists === false});
-        enemy.revive();
-      }
+  updateEnemySpawn: function(delta) { // NOTE: ver detalles de tiempos
+    var spawn = this.stage.enemySpawns[this.stage.lastSpawn];
+    while (spawn && spawn.time < this.elapsedTime){
+      var enemy = spawn.pool.find(function(mob){ return mob.exists === false; });
+      enemy.revive(spawn.x);
+      spawn = this.stage.enemySpawns[++this.stage.lastSpawn]
     }
   },
 

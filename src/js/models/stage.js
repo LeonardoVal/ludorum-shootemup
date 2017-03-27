@@ -2,13 +2,13 @@ function Stage() {
 	this.world = new p2.World();
 	this.world.applyGravity = false;
 	this.player = null;
-	this.enemyBulletPools = null;
-	this.bonuses = null;
-	this.clouds = null;
+	this.pools = {};
 	this.scrollSpeed = CONFIG.SCROLL_SPEED;
 	this.width = CONFIG.GAME_WIDTH * CONFIG.PIXEL_RATIO;
 	this.height = CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO;
 }
+
+// TODO: Make getBonus(), getPlane(), getSomething() para poder usar en lugar de pool.find((x) => (!x.alive))
 
 Stage.prototype = {
 	newGroup: function(){
@@ -56,41 +56,48 @@ Stage.prototype = {
 			return group;
 		}
 		var fillGroupTied = fillGroup.bind(this);
+
 		// MOB BULLETS
-		this.enemyBulletPools = [];
-		// Small bullets
-		this.enemyBulletPools[0] = fillGroupTied("Bullet", CONFIG.BULLETPOOL_SIZE_ENNEMY, 0);
-		// Mid bullets
-		this.enemyBulletPools[1] = fillGroupTied("Bullet", CONFIG.BULLETPOOL_SIZE_ENNEMY, 1);
+		this.pools.enemyBullets = {
+			small: fillGroupTied("Bullet", CONFIG.BULLETPOOL_SIZE_ENNEMY, 0),
+			medium: fillGroupTied("Bullet", CONFIG.BULLETPOOL_SIZE_ENNEMY, 1),
+		};
 		// GROUND ENEMIES
-		this.mobPoolsGround = [];
-		this.mobPoolsGround[0] = fillGroupTied("Turret", CONFIG.MOBPOOL_SIZE);
+		this.pools.groundEnemies = {
+			turret: fillGroupTied("Turret", CONFIG.MOBPOOL_SIZE),
+		};
 		// FLYING ENEMIES
-		this.mobPools = [];
-		this.mobPools[0] = fillGroupTied("Plane", CONFIG.MOBPOOL_SIZE);
-		this.mobPools[1] = fillGroupTied("Vessel", CONFIG.MOBPOOL_SIZE);
-		this.mobPools[2] = fillGroupTied("Flagship", CONFIG.MOBPOOL_SIZE);
-		// DELAYS (flying)
-		this.enemyDelay = [];
-		this.nextEnemyAt = [];
-		this.enemyDelay[0] = 1000;
-		this.enemyDelay[1] = 5000;
-		this.enemyDelay[2] = 30000;
-		this.nextEnemyAt[0] = this.enemyDelay[0];	// TODO in a loop
-		this.nextEnemyAt[1] = this.enemyDelay[1];
-		this.nextEnemyAt[2] = this.enemyDelay[2];
-		// DELAYS (ground)
-		this.enemyDelayGround = [];
-		this.nextGroundEnemyAt = [];
-		this.enemyDelayGround[0] = 5000;
-		this.nextGroundEnemyAt[0] = this.enemyDelayGround[0];
+		this.pools.flyingEnemies = {
+			plane: fillGroupTied("Plane", CONFIG.MOBPOOL_SIZE),
+			vessel: fillGroupTied("Vessel", CONFIG.MOBPOOL_SIZE),
+			flagship: fillGroupTied("Flagship", CONFIG.MOBPOOL_SIZE),
+		};
+
+		// TODO move this away
+		var planes = this.pools.flyingEnemies.plane;
+		var turrets = this.pools.groundEnemies.turret;
+
+		this.lastSpawn = 0;
+		this.enemySpawns = [
+			{ time: 200, pool: planes, x: this.width * 0.1 },
+			{ time: 500, pool: planes, x: this.width * 0.2 },
+			{ time: 800, pool: turrets, x: this.width * 0.3 },
+			{ time: 1100, pool: planes, x: this.width * 0.4 },
+			{ time: 200, pool: planes, x: this.width * 0.9 },
+			{ time: 500, pool: planes, x: this.width * 0.8 },
+			{ time: 800, pool: turrets, x: this.width * 0.7 },
+			{ time: 1100, pool: planes, x: this.width * 0.6 },
+			{ time: 1400, pool: turrets, x: this.width * 0.5 },
+		].sort(function(a, b) {
+			return a.time - b.time;
+		});
 	},
 
 	createBonuses: function(){
-		this.bonuses = this.newGroup();
+		this.pools.bonus = this.newGroup();
 		for (var i = 0; i < CONFIG.BONUSPOOL_SIZE; i++) {
 			var o = new exports.Collectible(this, 'bonus_cube');
-			this.bonuses.add(o);
+			this.pools.bonus.add(o);
 			o.exists = false;
 			o.alive = false;
 			o.visible = false;
@@ -127,6 +134,50 @@ Stage.prototype = {
 	},
 
 	generateTerrain: function () {
+		if (CONFIG.LEGACY_GENERATOR){
+			return oldTerrainGenerator();
+		} else {
+			var sizeX = CONFIG.WORLD_WIDTH + 1;
+			var sizeY = CONFIG.WORLD_HEIGHT + 1;
+
+			var map = [];
+			var i,j,k;
+
+			var TILE = {
+				FORREST: 		6,
+				EARTH: 			6 + 15 * 1,
+				WATER: 			6 + 15 * 2,
+				DEEPWATER: 	6 + 15 * 3
+			};
+
+			for (i = 0; i < sizeX - 1; i++) {
+				map[i] = [];
+				for (j = 0; j < sizeY - 1; j++) {
+					map[i][j] = TILE.EARTH;
+				}
+			}
+			return map;
+		}
+	},
+
+	forEach: function (callback, thisArg) {
+		// Player
+		[this.player].forEach(callback, thisArg);
+		// Enemies
+		this.pools.groundEnemies.turret.forEach(callback, thisArg);
+		this.pools.flyingEnemies.plane.forEach(callback, thisArg);
+		this.pools.flyingEnemies.vessel.forEach(callback, thisArg);
+		this.pools.flyingEnemies.flagship.forEach(callback, thisArg);
+		// Player Bullets
+		this.player.bulletPool.forEach(callback, thisArg);
+		// Enemy Bullets
+		this.pools.enemyBullets.small.forEach(callback, thisArg);
+		this.pools.enemyBullets.medium.forEach(callback, thisArg);
+		// Collectibles
+		this.pools.bonus.forEach(callback, thisArg);
+	},
+
+	oldTerrainGenerator: function (map, tile) {
 		var sizeX = CONFIG.WORLD_WIDTH + 1;
 		var sizeY = CONFIG.WORLD_HEIGHT + 1;
 
@@ -139,17 +190,6 @@ Stage.prototype = {
 			WATER: 			6 + 15 * 2,
 			DEEPWATER: 	6 + 15 * 3
 		};
-
-		// BEGIN TEST (este codigo lo puse yo para generar un mapa manualmente)
-		for (i = 0; i < sizeX - 1; i++) {
-			map[i] = [];
-			for (j = 0; j < sizeY - 1; j++) {
-				// map[i][j] = Math.floor(Math.random() * (50 - 0 + 1) + 0);
-				map[i][j] = TILE.EARTH;
-			}
-		}
-		return map;
-		// END TEST
 
 		var TILESTACK = [TILE.FORREST, TILE.EARTH, TILE.WATER, TILE.DEEPWATER];
 

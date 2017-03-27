@@ -46,7 +46,7 @@ function Shoot(stage, shooter, shootConfig) {
 			}
 			// One salve
 			for (var i = 0; i < config.nBullets; i++) {
-				var deadBullet = that.stage.enemyBulletPools[config.bulletType].find(function(b){return !b.alive});
+				var deadBullet = that.stage.pools.enemyBullets.small.find(function(b){return !b.alive}); // allow medium bullets (config.bulletType)
 				if (deadBullet) {
 					that.bullets[i] = deadBullet;
 					// Homing bullet LOL --> this.state.physics.arcade.moveToObject(bullet, this.stage.player, this.bulletSpeed * CONFIG.PIXEL_RATIO);

@@ -45,34 +45,36 @@ StageController.prototype = {
     }, this);
   },
 
+  makeControllersFromPool: function(pool, storage) {
+    pool.forEach(function (poolElement) {
+      storage.add(new SpriteController(poolElement, this.state, poolElement.image));
+    }, this);
+  },
+
+  makeControllersFromPoolContainer: function(pools, storage) {
+    for (var pool in pools) {
+      if (pools.hasOwnProperty(pool)) {
+        this.makeControllersFromPool(pools[pool], storage);
+      }
+    }
+  },
+
   createEnemyControllers: function(){
     this.enemyBullets = this.game.add.group();
-    this.stage.enemyBulletPools.forEach(function(pool){
-      pool.forEach(function(bullet){
-        this.enemyBullets.add(new SpriteController(bullet, this.state, bullet.image));
-      },this);
-    },this);
-    this.flyingEnemies = this.game.add.group();
-    this.stage.mobPools.forEach(function(pool){
-      pool.forEach(function(enemy){
-        this.flyingEnemies.add(new SpriteController(enemy, this.state, enemy.image));
-      },this);
-    },this);
+    this.makeControllersFromPoolContainer(this.stage.pools.enemyBullets, this.enemyBullets);
+
     this.groundEnemies = this.game.add.group();
-    this.stage.mobPoolsGround.forEach(function(pool){
-      pool.forEach(function(enemy){
-        this.groundEnemies.add(new SpriteController(enemy, this.state, enemy.image));
-      },this);
-    },this);
+    this.makeControllersFromPoolContainer(this.stage.pools.groundEnemies, this.groundEnemies);
+
+    this.flyingEnemies = this.game.add.group();
+    this.makeControllersFromPoolContainer(this.stage.pools.flyingEnemies, this.flyingEnemies);
   },
 
   createBonusControllers: function(){
     this.bonuses = this.game.add.group();
-    this.stage.bonuses.forEach(function(bonus){
-		this.bonuses.add(new SpriteController(bonus, this.state, bonus.image));
-    },this);
+    this.makeControllersFromPool(this.stage.pools.bonus, this.bonuses)
   },
-  
+
   createTilemap: function() {
     this.map = this.game.add.tilemap();
 

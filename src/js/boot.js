@@ -22,6 +22,7 @@ var CONFIG = exports.CONFIG = {
 	BLINK_DAMAGE_TIME: 		8,
 
 	AUDIO_LEVEL: 					0.5,
+	LEGACY_GENERATOR:			false,
 
 	CLASS_STATS: 					[{
 		className: 					'Viper',

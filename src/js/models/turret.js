@@ -19,10 +19,12 @@ Turret.prototype.image = 'mob_turret_1';
 Turret.prototype.maxHealth = 150;
 Turret.prototype.speed = 0;
 Turret.prototype.isPinnedToGround = true;
-Turret.prototype.bulletType = 1;
 Turret.prototype.shootDelay = 5000;
 Turret.prototype.points = 5000;
 Turret.prototype.lootProbability = 0.5;
+Turret.prototype.getBulletPool = function() {
+	return this.stage.pools.enemyBullets.medium;
+};
 
 Turret.prototype.shootConfig = {
 	bulletType: 1,
@@ -43,22 +45,6 @@ Turret.prototype.shoot = function(shootConfig) {
 
 	// Call the parent shoot function
 	exports.Enemy.prototype.shoot.call(this, shootConfig);
-};
-
-// TODO sacar esta funcion? o sacar el else en Enemy.revive
-Turret.prototype.revive = function (i, j) {
-
-	// this.reset(
-	// 	(i + 0.5) * 24 * CONFIG.PIXEL_RATIO,
-	// 	((j + 0.5) - CONFIG.WORLD_SWAP_HEIGHT) * 28 * CONFIG.PIXEL_RATIO
-	// 	);
-	//
-	// this.body.velocity.y = this.stage.scrollSpeed * CONFIG.PIXEL_RATIO;
-	//
-	// this.nextShotAt = this.game.rnd.integerInRange(0, this.shootDelay);
-
-	// Call the parent revive function
-	exports.Enemy.prototype.revive.call(this);
 };
 
 function animationStuff() { // FIXME
