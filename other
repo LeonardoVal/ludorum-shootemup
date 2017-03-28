@@ -21,13 +21,14 @@ Done:
 	Flying Mobs
 	Shoot (necesita optimizarse y verificacion de que funciona despues de quitar el window.setTimeout)
 	Turret (faltan animaciones)
+	Collectible (faltan animaciones)
 
 TODO:
 	Models:
 		cambiar:
 			Player - no tiene aceleracion
-			Collectible - separar modelo y controlador
 			Stage - agregar funcion de clonacion
+			En general - poder deshabilitar funciones que no seran necesarias en la simulacion (ej: Director.updateBackground)
 			BORRAR LAS NUBES POR SIEMPRE
 		nuevos:
 			SpawnManager
