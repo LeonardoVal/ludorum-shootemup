@@ -189,45 +189,6 @@ Game.prototype = {
 	  }
 	},
 
-	// TODO ver esto
-	updateEnemySpawnGround: function () {
-		var enemy, i, j, k, delta;
-		delta = CONFIG.WORLD_SWAP_HEIGHT * 28 / this.stage.scrollSpeed;
-		var swapMap = [];
-		for (i = 0; i < CONFIG.WORLD_WIDTH; i++) {
-			swapMap[i] = [];
-			for(j = 0; j < CONFIG.WORLD_SWAP_HEIGHT; j++) {
-				var rowOffset = CONFIG.WORLD_HEIGHT - (this.stage.groundHeight + this.stage.scrollCounter) + j;
-				if (rowOffset < 0) {
-					rowOffset += CONFIG.WORLD_HEIGHT;
-				}
-				// this.map.putTile(this.terrainData[i][rowOffset],i,j,this.ground);
-				swapMap[i][j] = this.stage.terrainData[i][rowOffset];
-			}
-		}
-		for (k = 0; k < this.stage.mobPoolsGround.length; k++) {
-			var nEnemies = Math.round(delta * 1000 / this.stage.enemyDelayGround[k]) + 1;
-			var tiles = [];
-			for (i = 0; i < CONFIG.WORLD_WIDTH; i++) {
-				for(j = 0; j < CONFIG.WORLD_SWAP_HEIGHT; j++) {
-					if (swapMap[i][j] === 21) {	// We are on a earth tile
-						tiles.push([i, j]);
-					}
-				}
-			}
-			if (tiles.length > 0 && nEnemies > 0) {
-				for (var n = 0; n < tiles.length && n < nEnemies; n++) {
-					var r = this.rnd.integerInRange(0, tiles.length - 1 - n);
-					if (this.stage.mobPoolsGround[k].countDead() > 0) {
-						enemy = this.stage.mobPoolsGround[k].getFirstExists(false);
-						enemy.revive(tiles[r][0], tiles[r][1]);
-						tiles.remove(r);
-					}
-				}
-			}
-		}
-	},
-
 	updateCloudSpawn: function () {
 		var cloud;
 		if (this.stage.nextCloudAt < this.time.now && this.stage.clouds.countDead() > 0) {
@@ -235,49 +196,6 @@ Game.prototype = {
 			cloud = this.stage.clouds.getFirstExists(false);
 			cloud.revive();
 		}
-	},
-
-	bulletVSmob: function (bullet, mob) {
-		bullet.kill();
-		mob = mob.owner;
-		mob.takeDamage(this.stage.player.strength / 5);	// TODO: constant
-		if (mob.health <= 0) {
-			mob.die();
-			this.explode(mob);
-			this.stage.player.score += mob.points;
-			this.updateGUI();
-		}
-	},
-
-	playerVSmob: function (player, mob) {
-		mob.kill();
-		this.explode(mob);
-		this.playerVSenemy(player);
-	},
-
-	playerVSbullet: function (player, bullet) {
-		bullet.kill();
-		this.playerVSenemy(player);
-	},
-
-	playerVSenemy: function (player) {
-		player.takeDamage(10);
-		if (player.health <= 0) {
-			player.kill();
-			player.alive = false;
-			this.explode(player);
-			this.sound['explosion_3'].play();
-			this.statePlay2Postplay();
-		} else {
-			this.sound['hurt_1'].play();
-		}
-		this.updateGUI();
-	},
-
-	playerVSbonus: function (player, bonus) {
-		bonus.kill();
-		player.collectUpgrade(bonus.bonusClass);
-		this.updateGUI();
 	},
 
 	// TODO : mob method
