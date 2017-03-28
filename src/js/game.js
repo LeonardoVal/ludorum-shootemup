@@ -169,8 +169,8 @@ Game.prototype = {
 		// DEBUG
 		this.game.debug.text("Frame Time   : "+this.delta
 		, 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 32);
-		// this.game.debug.text("Director Time: "+this.director.elapsedTime
-		// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 16);
+		this.game.debug.text("Director Time: "+this.director.elapsedTime / 1000
+		, 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 16);
 		// this.game.debug.text("Real Time    : "+this.realElapsedTime
 		// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16);
 		// this.game.debug.text("Delta Time   : "+ (this.realElapsedTime - this.director.elapsedTime)

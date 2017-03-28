@@ -90,6 +90,7 @@ Stage.prototype = {
 		].sort(function(a, b) {
 			return a.time - b.time;
 		});
+		this.endTime = 10 * 1000;
 	},
 
 	createBonuses: function(){

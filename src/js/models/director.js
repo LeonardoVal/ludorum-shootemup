@@ -85,6 +85,9 @@ Director.prototype = {
         gameObject.updateLogic(delta, input);
       }
     });
+    if (this.stage.endTime < this.elapsedTime){
+      this.stage.player.die();
+    }
   },
 
   updateEnemySpawn: function(delta) { // NOTE: ver detalles de tiempos
