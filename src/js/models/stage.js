@@ -30,12 +30,11 @@ Stage.prototype = {
 	},
 
 	createAll: function(){
-		// TODO implementar
 		this.createGround();
-		// this.createClouds();
 		this.createEnemies();
 		this.createBonuses();
 		this.createPlayer();
+		// this.createClouds();
 	},
 
 	createPlayer: function(){
