@@ -21,7 +21,6 @@ function Game() {
 Game.prototype = {
 	create: function () {
 		this.gameState = this.STATE.preplay;
-		this.createWorld();
 		// STAGE & Director
 		this.stage = new exports.Stage();
 		this.stage.createAll();
@@ -39,15 +38,6 @@ Game.prototype = {
 		this.inputFunction = this.preplayInput;
 		this.deltaAccumulator = 0;
 		this.realElapsedTime = 0; // FIXME sacar, solo se usa para debug
-	},
-
-	createWorld: function () {
-		this.game.physics.startSystem(Phaser.Physics.ARCADE);
-
-		this.game.world.setBounds(0, 0, 24 * CONFIG.WORLD_WIDTH * CONFIG.PIXEL_RATIO, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO);
-
-		console.log('Camera size     		: ' + this.game.camera.width + '/' + this.game.camera.height);
-		console.log('World size      		: ' + this.world.width + '/' + this.world.height);
 	},
 
 	createGUI: function () {
