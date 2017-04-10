@@ -41,7 +41,7 @@ Game.prototype = {
 	},
 
 	createGUI: function () {
-		this.guiText0 = this.add.bitmapText(0, 0, 'minecraftia', 'Get ready');
+		this.guiText0 = this.add.bitmapText(0, 0, 'minecraftia', 'Get ready\nPress S\nto simulate!');
 		this.guiText0.scale.setTo(CONFIG.PIXEL_RATIO, CONFIG.PIXEL_RATIO);
 		this.guiText0.x = (this.game.width - this.guiText0.textWidth * CONFIG.PIXEL_RATIO) / 2;
 		this.guiText0.y = (this.game.height- this.guiText0.textHeight * CONFIG.PIXEL_RATIO) / 2;
@@ -84,11 +84,21 @@ Game.prototype = {
 		if (input.w || input.e) {
 			this.statePreplay2Play();
 		}
+		if (input.s) {
+			this.statePreplay2SimulatedPlay();
+		}
 	},
 
 	statePreplay2Play: function () {
 		this.gameState = this.STATE.play;
 		this.inputFunction = this.playInput;
+		this.guiText0.setText('');
+	},
+
+	statePreplay2SimulatedPlay: function () {
+		indexForVisualSimulation = 0;
+		this.gameState = this.STATE.play;
+		this.inputFunction = this.simulatedInput;
 		this.guiText0.setText('');
 	},
 
@@ -127,6 +137,14 @@ Game.prototype = {
 			this.slow = 1;
 		}
 		this.director.next(logicDelta*this.slow, input);
+	},
+
+	simulatedInput: function(input, delta){
+		this.deltaAccumulator += delta;
+		if (this.deltaAccumulator >= deltaForVisualSimulation){
+			this.deltaAccumulator -= deltaForVisualSimulation;
+			this.director.next(deltaForVisualSimulation, inputForVisualSimulation[indexForVisualSimulation++] || input);
+		}
 	},
 
 	statePlay2Postplay: function () {
@@ -170,6 +188,7 @@ Game.prototype = {
 	makeInputObject: function(){
 	  return {
 	    w: this.input.keyboard.isDown(Phaser.Keyboard.W),
+	    s: this.input.keyboard.isDown(Phaser.Keyboard.S),
 	    f: this.input.keyboard.isDown(Phaser.Keyboard.F),
 	    e: this.input.keyboard.isDown(Phaser.Keyboard.E),
 	    up: this.cursors.up.isDown,

@@ -2,6 +2,8 @@ module.exports = function(grunt) {
   var SOURCES = [
     'src/js/__prologue__.js',
     'src/js/models/_config.js',
+    'src/js/simulation/simulationInput.js',
+    'src/js/simulation/simulation.js',
     'src/js/boot.js',
 		'src/js/preloader.js',
 		'src/js/menu.js',
