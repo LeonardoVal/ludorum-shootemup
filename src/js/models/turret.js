@@ -19,9 +19,8 @@ Turret.prototype.image = 'mob_turret_1';
 Turret.prototype.maxHealth = 150;
 Turret.prototype.speed = 0;
 Turret.prototype.isPinnedToGround = true;
-Turret.prototype.shootDelay = 5000;
+Turret.prototype.shootDelay = 3000;
 Turret.prototype.points = 5000;
-Turret.prototype.lootProbability = 0.5;
 Turret.prototype.getBulletPool = function() {
 	return this.stage.pools.enemyBullets.medium;
 };
@@ -32,7 +31,7 @@ Turret.prototype.shootConfig = {
 	bulletDelay: 0,
 	bulletAngle: 0,
 	bulletSpread: 0,
-	nShoots: 3,
+	nShoots: 6,
 	shootDelay: 50,
 	shootAngle: 0,
 	shootRotationSpeed: 0.1

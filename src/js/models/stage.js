@@ -78,15 +78,15 @@ Stage.prototype = {
 
 		this.lastSpawn = 0;
 		this.enemySpawns = [
-			{ time: 200, pool: planes, x: this.width * 0.1 },
-			{ time: 500, pool: planes, x: this.width * 0.2 },
-			{ time: 800, pool: turrets, x: this.width * 0.3 },
-			{ time: 1100, pool: planes, x: this.width * 0.4 },
-			{ time: 200, pool: planes, x: this.width * 0.9 },
-			{ time: 500, pool: planes, x: this.width * 0.8 },
-			{ time: 800, pool: turrets, x: this.width * 0.7 },
-			{ time: 1100, pool: planes, x: this.width * 0.6 },
-			{ time: 1400, pool: turrets, x: this.width * 0.5 },
+			{ time: 200, pool: planes, info: { x: this.width * 0.1 } },
+			{ time: 500, pool: planes, info: { x: this.width * 0.2 } },
+			{ time: 800, pool: turrets, info: { x: this.width * 0.3, bonusClass: CONFIG.BONUS_CLASSES.STRENGTH } },
+			{ time: 1100, pool: planes, info: { x: this.width * 0.4 } },
+			{ time: 200, pool: planes, info: { x: this.width * 0.9 } },
+			{ time: 500, pool: planes, info: { x: this.width * 0.8 } },
+			{ time: 800, pool: turrets, info: { x: this.width * 0.7, bonusClass: CONFIG.BONUS_CLASSES.RATE } },
+			{ time: 1100, pool: planes, info: { x: this.width * 0.6 } },
+			{ time: 1400, pool: turrets, info: { x: this.width * 0.5 } },
 		].sort(function(a, b) {
 			return a.time - b.time;
 		});

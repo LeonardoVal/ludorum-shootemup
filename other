@@ -1,6 +1,8 @@
--delta is in miliseconds
--puede haber problemas si los delta son grandes
--recordar checkear por alive antes de hacer updateLogic en el director
+Nota para debugger:
+	en el archivo game.js se usa la funcion playInput para que el director avance. Si se pierde el foco
+	del juego o se pone un debugger, al volver al juego se correra con un delta grande, y se saltara
+	gran parte del juego. Se recomienda sustituir playInput por playInput2 (funcion al final del archivo game.js)
+	para poder limitar el delta si hay problemas al usar el debugger
 
 SI SE PARA EL JUEGO (ej en el debugger, o minimizando) SPAWNEA UNA ARMADA DE BICHOS (y es glorioso)
 No lo veo como un problema igual, es algo fuera de los modelos y si se tiene cuidado no pasa.

@@ -13,7 +13,7 @@ function Collectible(stage, image) {
 	exports.Actor.call(this, stage);
 	this.image = image;
 	this.faction = "Bonus";
-	this.bonusClass = Math.floor(Math.random() * (3 - 0 + 1) + 0);
+	this.bonusClass = null;
 	//this.updateClass(); FIXME
 }
 
@@ -48,6 +48,14 @@ Collectible.prototype.die = function () {
 	this.alive = false;
 	this.exists = false;
 	this.visible = false;
+};
+
+Collectible.prototype.revive = function (bonusClass) {
+	this.bonusClass = bonusClass;
+	this.stage.world.addBody(this);
+	this.alive = true;
+	this.exists = true;
+	this.visible = true;
 };
 
 // Export the object

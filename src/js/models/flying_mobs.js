@@ -25,10 +25,9 @@ Plane.prototype.constructor = Plane;
 Plane.prototype.image = 'mob_plane';
 Plane.prototype.maxHealth = 30;
 Plane.prototype.speed = 60;
-Plane.prototype.shootDelay = 3000;
+Plane.prototype.shootDelay = 500;
 Plane.prototype.bulletSpeed = 125;
 Plane.prototype.points = 100;
-Plane.prototype.lootProbability = 0.1;
 Plane.prototype.shootConfig = {
 	bulletType: 0,
 	nBullets: 1,
@@ -69,9 +68,8 @@ Vessel.prototype.constructor = Vessel;
 Vessel.prototype.image = 'mob_vessel_1';
 Vessel.prototype.maxHealth = 100;
 Vessel.prototype.speed = 30;
-Vessel.prototype.shootDelay = 2000;
+Vessel.prototype.shootDelay = 1000;
 Vessel.prototype.points = 500;
-Vessel.prototype.lootProbability = 0.5;
 Vessel.prototype.shootConfig = {
 	bulletType: 0,
 	nBullets: 5,
@@ -107,9 +105,8 @@ Flagship.prototype.constructor = Flagship;
 Flagship.prototype.image = 'mob_flagship_1';
 Flagship.prototype.maxHealth = 300;
 Flagship.prototype.speed = 10;
-Flagship.prototype.shootDelay = 3000;
+Flagship.prototype.shootDelay = 2000;
 Flagship.prototype.points = 2000;
-Flagship.prototype.lootProbability = 0.8;
 Flagship.prototype.bulletCancel = true;
 Flagship.prototype.shootConfig = {
 	bulletType: 1,

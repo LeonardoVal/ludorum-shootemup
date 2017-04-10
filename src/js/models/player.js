@@ -14,9 +14,17 @@ function Player(stage){
 	exports.Mob.call(this, stage);
 
 	this.faction = "Player";
-	this.playerClass = Math.floor(Math.random()*4+1);
-	this.playerStats = CONFIG.CLASS_STATS[this.playerClass - 1];
-	this.classStats = this.playerStats;
+	// this.playerClass = Math.floor(Math.random()*4+1); // FIXME remove randomness
+	this.playerClass = 1;
+	var config = CONFIG.CLASS_STATS[this.playerClass - 1]
+	this.playerStats = {
+		className: config.className,
+		health: config.health,
+		strength: config.strength,
+		rate: config.rate,
+		speed: config.speed,
+		accel: config.accel,
+	};
 	this.hitbox = { width: 7, height: 7, offsetX: 0, offsetY: 3 };
 	this.setInitialPosition();
 	this.queueAnimation("idle");
@@ -241,11 +249,12 @@ Player.prototype.collectUpgrade = function(upgrade){
 	// };
 	// var strengthPart = this.classStats.strength * (maxFactor - 1);
 	//
-	if (upgrade === 0) {
+
+	if (upgrade === CONFIG.BONUS_CLASSES.STRENGTH) {
 		this.playerStats.strength += 10;
-	} else if (upgrade === 1) {
+	} else if (upgrade === CONFIG.BONUS_CLASSES.RATE) {
 		this.playerStats.rate += 1;
-	} else if (upgrade === 2) {
+	} else if (upgrade === CONFIG.BONUS_CLASSES.SPEED) {
 		this.playerStats.speed += 10;
 	} else {
 		this.playerStats.accel += 1;

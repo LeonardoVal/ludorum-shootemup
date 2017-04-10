@@ -50,12 +50,12 @@ var Director = exports.Director = function Director(stage){
     else if (event.bodyA.faction === "Player" && event.bodyB.faction === "Bonus"){
       var bonus = event.bodyB, player = event.bodyA;
       bonus.die();
-	    player.collectUpgrade(bonus.bonusClass);
+      player.collectUpgrade(bonus.bonusClass);
 		}
   	else if (event.bodyB.faction === "Player" && event.bodyA.faction === "Bonus"){
       var bonus = event.bodyA, player = event.bodyB;
       bonus.die();
-	    player.collectUpgrade(bonus.bonusClass);
+      player.collectUpgrade(bonus.bonusClass);
 		}
 	});
 };
@@ -94,7 +94,7 @@ Director.prototype = {
     var spawn = this.stage.enemySpawns[this.stage.lastSpawn];
     while (spawn && spawn.time < this.elapsedTime){
       var enemy = spawn.pool.find(function(mob){ return mob.exists === false; });
-      enemy.revive(spawn.x);
+      enemy.revive(spawn.info);
       spawn = this.stage.enemySpawns[++this.stage.lastSpawn]
     }
   },

@@ -22,9 +22,7 @@ Enemy.prototype.speed = 50;
 Enemy.prototype.shootDelay = 1000;
 Enemy.prototype.bulletSpeed = 100;
 Enemy.prototype.points = 100;
-Enemy.prototype.lootProbability = 0.2;
 Enemy.prototype.bulletCancel = false;
-Enemy.prototype.lootType = 1;
 Enemy.prototype.shootConfig = {};
 Enemy.prototype.getBulletPool = function() {
 	return this.stage.pools.enemyBullets.small;
@@ -34,6 +32,8 @@ Enemy.prototype.updateLogic = function(delta){
 	// Call the parent update function
 	exports.Mob.prototype.updateLogic.call(this, delta);
 	this.shoots.forEach(function(shoot) {
+		// FIXME creo que al estar esto dentro de enemy,
+		// si ese mismo objeto enemigo del pool muere y revive podrian quedar balas (o shoots) congeladas
 		shoot.updateLogic(delta);
 	});
 	// Mob shoot
@@ -41,7 +41,6 @@ Enemy.prototype.updateLogic = function(delta){
 	var isTimeToShoot = (this.nextShotDelay -= delta) <= 0;
 	if (!isTimeToShoot) return;
 	var canShoot =
-		this.alive && 	// Enemy is alive
 		this.stage.player.alive && 	// Player is alive
 		this.position[1] < this.stage.player.position[1] - 100 * CONFIG.PIXEL_RATIO && // Enemy above player
 		this.getBulletPool().find(function(bullet){return !bullet.alive}); // Bullets in pool
@@ -66,44 +65,39 @@ Enemy.prototype.die = function () {
 		shoot.die(bulletCancel);
 	});
 	// Loot things
-	if (Math.random() < this.lootProbability) {
-		this.loot(this.lootType);
+	if (this.spawnInfo.bonusClass != null) {
+		this.loot(this.spawnInfo.bonusClass);
 	}
 	// Explosion sound
 	var s = this.maxHealth, f;
-	if (s < 80 ) { f = 1; }
-		else if (s < 200 ) { f = 2; }
-		else if (s < 500 ) { f = 3; }
-		else { f = 4; }
+	if (s < 80) { f = 1; }
+	else if (s < 200) { f = 2; }
+	else if (s < 500) { f = 3; }
+	else { f = 4; }
 	// FIXME this.game.sound['explosion_' + f].play();
 };
 
-Enemy.prototype.revive = function (x) {
-	this.position[0] = x;
+Enemy.prototype.revive = function (info) {
+	this.spawnInfo = info || {};
+
+	this.position[0] = info.x;
 	this.position[1] = -32;
 	this.velocity[1] = (this.speed + this.stage.scrollSpeed) * CONFIG.PIXEL_RATIO;
 
-	var min = 0;
-	var max = this.shootDelay;
-	// random int between min and max
-	this.nextShotDelay = Math.floor(Math.random() * (max - min + 1) + min); // FIXME remove randomness
+	this.nextShotDelay = this.shootDelay;
 	// Call the parent revive function
 	exports.Mob.prototype.revive.call(this);
 };
 
-Enemy.prototype.loot = function(type) {
+Enemy.prototype.loot = function(bonusClass) {
 	var bonus = this.stage.pools.bonus.find(function(bonus){return !bonus.exists}) // Bonus pool
 	if (!bonus) {return}
-	bonus.exists = true;
-	bonus.alive = true;
-	bonus.visible = true;
-	this.stage.world.addBody(bonus);
+	bonus.revive(bonusClass)
 	//bonus.updateClass();
 	bonus.position[0] = this.position[0];
-	bonus.position[1] = this.position[1]
+	bonus.position[1] = this.position[1];
 	bonus.velocity[1] = (this.stage.scrollSpeed) * CONFIG.PIXEL_RATIO;
 	//bonus.body.angularVelocity = 30;
-	//type = type; // FIXME
 };
 
 
