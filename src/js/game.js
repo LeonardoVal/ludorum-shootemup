@@ -117,7 +117,7 @@ Game.prototype = {
 			this.nextFrameDelay -= delta;
 			if (input.f){
 				if (this.nextFrameDelay < 0){
-					this.director.interpolatedNext(300, 4, input);
+					this.director.next(20, input);
 					this.nextFrameDelay = 100;
 				}
 			}
@@ -136,14 +136,15 @@ Game.prototype = {
 		if (this.slow > 1){
 			this.slow = 1;
 		}
-		this.director.next(logicDelta*this.slow, input);
+		this.director.nextWithDelta(logicDelta*this.slow, input);
 	},
 
 	simulatedInput: function(input, delta){
+		var inputDuration = this.director.fixedStepDelta * stepsForVisualSimulation;
 		this.deltaAccumulator += delta;
-		if (this.deltaAccumulator >= deltaForVisualSimulation){
-			this.deltaAccumulator -= deltaForVisualSimulation;
-			this.director.next(deltaForVisualSimulation, inputForVisualSimulation[indexForVisualSimulation++] || input);
+		if (this.deltaAccumulator >= inputDuration){
+			this.deltaAccumulator -= inputDuration;
+			this.director.next(stepsForVisualSimulation, inputForVisualSimulation[indexForVisualSimulation++] || input);
 		}
 	},
 
@@ -163,7 +164,6 @@ Game.prototype = {
 		var delta = this.game.time.now - this.lastUpdate;
 		this.inputFunction(this.makeInputObject(), delta);
 		this.delta = delta / 1000; //in seconds
-		this.lastUpdate = this.game.time.now;
 
 		// TODO cambiar esto para que no se haga manualmente (como los otros controllers)
 		this.stageController.updateBackground();
@@ -174,15 +174,7 @@ Game.prototype = {
 
 		this.updateGUI();
 
-		// DEBUG
-		this.game.debug.text("Frame Time   : "+this.delta
-		, 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 32);
-		this.game.debug.text("Director Time: "+this.director.elapsedTime / 1000
-		, 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 16);
-		// this.game.debug.text("Real Time    : "+this.realElapsedTime
-		// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16);
-		// this.game.debug.text("Delta Time   : "+ (this.realElapsedTime - this.director.elapsedTime)
-		// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 + 16);
+		this.lastUpdate = this.game.time.now;
 	},
 
 	makeInputObject: function(){
@@ -278,20 +270,16 @@ Game.prototype = {
 
 	// RENDER
 	render: function () {
-		// this.game.debug.body(this.stage.player);
-		if (CONFIG.DEBUG.bottomInfos && false) { // FIXME
-			this.game.debug.text(
-				'ground.y : ' + Math.round(this.ground.y) + 'px | ' +
-				this.mobPools[0].countLiving() + '+' + this.mobPools[1].countLiving() + '+' + this.mobPools[2].countLiving() + '+' + this.mobPoolsGround[0].countLiving() + ' mobs | ' +
-				this.enemyBulletPools[0].countLiving() + '+' + this.enemyBulletPools[1].countLiving() + ' mob bullets | ' +
-				(100 - this.stage.player.bulletPool.countDead()) + ' bullets | '
-				,
-				0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16);
-			this.game.debug.text(
-				// 'player.health : ' + this.player.health + ' | ' +
-				'Camera position : ' + this.camera.x + '/' + this.camera.y + ' | ' +
-				'SCROLL : ' + Math.round(this.ground.y % (28 * CONFIG.PIXEL_RATIO))
-				, 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 + 16);
+		if (CONFIG.DEBUG.bottomInfos) {
+			// DEBUG
+			this.game.debug.text("Frame Time   : "+this.delta
+			, 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 32);
+			this.game.debug.text("Director Time: "+this.director.elapsedTime / 1000
+			, 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 - 16);
+			// this.game.debug.text("Real Time    : "+this.realElapsedTime
+			// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16);
+			// this.game.debug.text("Delta Time   : "+ (this.realElapsedTime - this.director.elapsedTime)
+			// , 0, CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO - 16 + 16);
 		}
 	}
 };

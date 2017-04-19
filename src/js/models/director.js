@@ -61,19 +61,26 @@ var Director = exports.Director = function Director(stage){
 };
 
 Director.prototype = {
-  // Avanza la logica "delta" milisegundos en el tiempo con un determinado "input",
-  // dando "steps" pasos intermedios (util para deltas grandes)
-  interpolatedNext: function interpolatedNext(delta, steps, input){
-    var interpolationDelta = delta / steps;
-    var actualDelta = 0;
-    while (actualDelta < delta){
-      this.next(interpolationDelta, input);
-      actualDelta += interpolationDelta;
+  fixedStepDelta: 1/60, // (60fps)
+
+  // Avanza la logica "steps" pasos, cada uno con duracion "this.fixedStepDelta"
+  next: function next(steps, input) {
+    for (var i = 0; i < steps; i++){
+      this.nextWithDelta(this.fixedStepDelta * 1000, input);
     }
   },
 
+  // Avanza la logica "delta" milisegundos en el tiempo con un determinado "input",
+  // dando pasos intermedios de duracion "this.fixedStepDelta" (util para deltas grandes)
+  nextWithInterpolatedDelta: function nextWithInterpolatedDelta(delta, input){
+    var steps = Math.floor(delta / this.fixedStepDelta);
+    this.next(steps, input);
+    var remainder = delta - steps * this.fixedStepDelta;
+    return remainder;
+  },
+
   // Avanza la logica "delta" milisegundos en el tiempo con un determinado "input"
-  next: function next(delta, input){
+  nextWithDelta: function nextWithDelta(delta, input){
     this.elapsedTime += delta; // TODO ver si esto va aca o al final de next (afecta los spawns)
     this.updateEnemySpawn(delta); // TODO crear modelo "spawnManager" y mover esto ahi
     this.updateBackground(delta); // TODO mover esto a otro lado (stage? o crear otro modelo)

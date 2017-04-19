@@ -25,7 +25,6 @@ function Player(stage){
 		speed: config.speed,
 		accel: config.accel,
 	};
-	this.hitbox = { width: 7, height: 7, offsetX: 0, offsetY: 3 };
 	this.setInitialPosition();
 	this.queueAnimation("idle");
 

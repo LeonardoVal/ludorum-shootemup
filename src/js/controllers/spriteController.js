@@ -15,6 +15,9 @@ var SpriteController = exports.SpriteController = function SpriteController(game
       this.animations.add(aData.name, aData.frames, aData.frameRate, aData.loop, aData.useNumericIndex);
     }, this);
   }
+  if (CONFIG.DEBUG.shapes){
+    this.renderDebug();
+  }
 }
 
 SpriteController.prototype = Object.create(Phaser.Sprite.prototype);
@@ -29,6 +32,10 @@ SpriteController.prototype.update = function update(){
   if (this.gameObject.tint !== undefined)
     this.tint = this.gameObject.tint;
   this.updateAnimation();
+  if (this.debug){
+    this.debug.updateSpriteTransform();
+    this.debug.visible = this.visible;
+  }
   Phaser.Sprite.prototype.update.call(this);
 }
 
@@ -37,4 +44,18 @@ SpriteController.prototype.updateAnimation = function updateAnimation(){
     this.play(this.gameObject.animation);
     this.gameObject.playAnimation = false;
   }
+}
+
+SpriteController.prototype.renderDebug = function() {
+  this.game.physics.p2 = {
+    mpx: function() {}
+  };
+  this.debug = new Phaser.Physics.P2.BodyDebug(this.game, this.gameObject,
+  {
+    pixelsPerLengthUnit: -1,
+    debugPolygons: false,
+    lineWidth: 1,
+    alpha: 0.5
+  });
+  this.game.physics.p2 = undefined;
 }

@@ -66,5 +66,6 @@ var CONFIG = exports.CONFIG = {
 	DEBUG: {
 		bottomInfos: 				true,
 		tileset: 						false,
+		shapes:							true,
 	},
 };

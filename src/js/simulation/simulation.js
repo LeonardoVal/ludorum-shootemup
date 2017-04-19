@@ -17,12 +17,12 @@ for (var i = 0; i < exports.simulationInput.length; i = i + 10){
 }
 
 // var inputForVisualSimulation = exports.simulationInputReduced;
-// var deltaForVisualSimulation = 10 * (1/60) * 1000;
+// var stepsForVisualSimulation = 10;
 var inputForVisualSimulation = exports.simulationInput;
-var deltaForVisualSimulation = (1/60) * 1000;
+var stepsForVisualSimulation = 1;
 
 var indexForVisualSimulation = 0;
 
 window.simulateSameAsVisual = function(){
-  return window.simulateGame(inputForVisualSimulation, deltaForVisualSimulation);
+  return window.simulateGame(inputForVisualSimulation, stepsForVisualSimulation);
 }
