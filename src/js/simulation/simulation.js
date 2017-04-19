@@ -16,10 +16,10 @@ for (var i = 0; i < exports.simulationInput.length; i = i + 10){
   exports.simulationInputReduced.push(exports.simulationInput[i]);
 }
 
-// var inputForVisualSimulation = exports.simulationInputReduced;
-// var stepsForVisualSimulation = 10;
-var inputForVisualSimulation = exports.simulationInput;
-var stepsForVisualSimulation = 1;
+var inputForVisualSimulation = exports.simulationInputReduced;
+var stepsForVisualSimulation = 10;
+// var inputForVisualSimulation = exports.simulationInput;
+// var stepsForVisualSimulation = 1;
 
 var indexForVisualSimulation = 0;
 

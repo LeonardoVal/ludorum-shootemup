@@ -140,7 +140,7 @@ Game.prototype = {
 	},
 
 	simulatedInput: function(input, delta){
-		var inputDuration = this.director.fixedStepDelta * stepsForVisualSimulation;
+		var inputDuration = this.director.fixedStepDelta * stepsForVisualSimulation * 1000;
 		this.deltaAccumulator += delta;
 		if (this.deltaAccumulator >= inputDuration){
 			this.deltaAccumulator -= inputDuration;
