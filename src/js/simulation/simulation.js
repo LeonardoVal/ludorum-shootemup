@@ -1,5 +1,5 @@
 // Generic Method
-window.simulateGame = function(inputArray, delta) {
+exports.simulateGame = function(inputArray, delta) {
   var stage = new exports.Stage();
   stage.createAll();
   var director = new exports.Director(stage);
@@ -23,6 +23,6 @@ var stepsForVisualSimulation = 10;
 
 var indexForVisualSimulation = 0;
 
-window.simulateSameAsVisual = function(){
-  return window.simulateGame(inputForVisualSimulation, stepsForVisualSimulation);
+exports.simulateSameAsVisual = function(){
+  return exports.simulateGame(inputForVisualSimulation, stepsForVisualSimulation);
 }
