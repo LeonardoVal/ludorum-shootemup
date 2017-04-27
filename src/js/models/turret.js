@@ -10,6 +10,10 @@
 function Turret(stage) {
 	// Call parent constructor
 	exports.Enemy.call(this, stage);
+	this.removeShape(this.shape);
+	this.shape = new p2.Box({ width: 40, height: 40});
+	this.shape.sensor = true;
+	this.addShape(this.shape);
 }
 
 Turret.prototype = Object.create(exports.Enemy.prototype);

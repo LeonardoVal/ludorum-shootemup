@@ -6,6 +6,9 @@ function Stage() {
 	this.scrollSpeed = CONFIG.SCROLL_SPEED;
 	this.width = CONFIG.GAME_WIDTH * CONFIG.PIXEL_RATIO;
 	this.height = CONFIG.GAME_HEIGHT * CONFIG.PIXEL_RATIO;
+	// FIXME creo que deberia ser algo asi, porque el stage podria salirse de la parte visible del juego
+	// this.width = CONFIG.WORLD_WIDTH * 24 * CONFIG.PIXEL_RATIO;
+	// this.height = CONFIG.WORLD_HEIGHT * CONFIG.PIXEL_RATIO;
 }
 
 // TODO: Make getBonus(), getPlane(), getSomething() para poder usar en lugar de pool.find((x) => (!x.alive))
@@ -74,23 +77,42 @@ Stage.prototype = {
 
 		// TODO move this away
 		var planes = this.pools.flyingEnemies.plane;
+		var vessels = this.pools.flyingEnemies.vessel;
+		var flagships = this.pools.flyingEnemies.flagship;
 		var turrets = this.pools.groundEnemies.turret;
+
+		function s(seconds) {
+			return seconds * 1000;
+		}
 
 		this.lastSpawn = 0;
 		this.enemySpawns = [
-			{ time: 200, pool: planes, info: { x: this.width * 0.1 } },
-			{ time: 500, pool: planes, info: { x: this.width * 0.2 } },
-			{ time: 800, pool: turrets, info: { x: this.width * 0.3, bonusClass: CONFIG.BONUS_CLASSES.STRENGTH } },
-			{ time: 1100, pool: planes, info: { x: this.width * 0.4 } },
-			{ time: 200, pool: planes, info: { x: this.width * 0.9 } },
-			{ time: 500, pool: planes, info: { x: this.width * 0.8 } },
-			{ time: 800, pool: turrets, info: { x: this.width * 0.7, bonusClass: CONFIG.BONUS_CLASSES.RATE } },
-			{ time: 1100, pool: planes, info: { x: this.width * 0.6 } },
-			{ time: 1400, pool: turrets, info: { x: this.width * 0.5 } },
+			{ time: s(3), pool: vessels, info: { x: this.width * 0.8, bonusClass: CONFIG.BONUS_CLASSES.STRENGTH } },
+			{ time: s(3.5), pool: planes, info: { x: this.width * 0.2 } },
+			{ time: s(4), pool: planes, info: { x: this.width * 0.2 } },
+			{ time: s(4.5), pool: planes, info: { x: this.width * 0.2 } },
+			{ time: s(5), pool: planes, info: { x: this.width * 0.2 } },
+
+			{ time: s(9), pool: vessels, info: { x: this.width * 0.2, bonusClass: CONFIG.BONUS_CLASSES.STRENGTH } },
+			{ time: s(8.5), pool: planes, info: { x: this.width * 0.8 } },
+			{ time: s(9), pool: planes, info: { x: this.width * 0.8 } },
+			{ time: s(9.5), pool: planes, info: { x: this.width * 0.8 } },
+			{ time: s(10), pool: planes, info: { x: this.width * 0.8 } },
+
+			{ time: s(15.2), pool: planes, info: { x: this.width * 0.1 } },
+			{ time: s(15.5), pool: planes, info: { x: this.width * 0.2 } },
+			{ time: s(15.8), pool: turrets, info: { x: this.width * 0.3, bonusClass: CONFIG.BONUS_CLASSES.RATE } },
+			{ time: s(16.1), pool: planes, info: { x: this.width * 0.4 } },
+			{ time: s(15.2), pool: planes, info: { x: this.width * 0.9 } },
+			{ time: s(15.5), pool: planes, info: { x: this.width * 0.8 } },
+			{ time: s(15.8), pool: turrets, info: { x: this.width * 0.7, bonusClass: CONFIG.BONUS_CLASSES.RATE } },
+			{ time: s(16.1), pool: planes, info: { x: this.width * 0.6 } },
+			{ time: s(16.4), pool: turrets, info: { x: this.width * 0.5 } },
+			{ time: s(20), pool: flagships, info: { x: this.width * 0.5 } },
 		].sort(function(a, b) {
 			return a.time - b.time;
 		});
-		this.endTime = 10 * 1000;
+		this.endTime = s(30);
 	},
 
 	createBonuses: function(){

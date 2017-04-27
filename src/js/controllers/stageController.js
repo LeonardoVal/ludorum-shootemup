@@ -20,7 +20,7 @@ StageController.prototype = {
 
   createPlayerController: function(){
     this.playerController = new PlayerController(this.stage.player, this.state);
-		this.game.camera.follow(this.playerController, Phaser.Camera.FOLLOW_PLATFORMER);
+		this.game.camera.follow(this.playerController);
   },
 
   createPlayerBulletsControllers: function(){

@@ -60,6 +60,10 @@ function Vessel(stage) {
 	// Call parent constructor
 	exports.Enemy.call(this, stage)
 	this.queueAnimation('idle');
+	this.removeShape(this.shape);
+	this.shape = new p2.Convex({ vertices: [[0,50], [-30,0], [30,0]]});
+	this.shape.sensor = true;
+	this.addShape(this.shape);
 }
 
 Vessel.prototype = Object.create(exports.Enemy.prototype);
@@ -97,6 +101,10 @@ function Flagship(stage) {
 	// Call parent constructor
 	exports.Enemy.call(this, stage)
 	this.queueAnimation('idle');
+	this.removeShape(this.shape);
+	this.shape = new p2.Convex({ vertices: [[0,50], [-70,0], [70,0]]});
+	this.shape.sensor = true;
+	this.addShape(this.shape);
 }
 
 Flagship.prototype = Object.create(exports.Enemy.prototype);

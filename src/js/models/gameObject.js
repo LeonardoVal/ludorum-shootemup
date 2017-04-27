@@ -3,7 +3,7 @@
 var GameObject = exports.GameObject = function GameObject(){
 	p2.Body.call(this, {mass: 100});
 	this.damping = 0; // removes friction
-	this.shape = new p2.Circle({ radius: 18});
+	this.shape = new p2.Box({ width: 20, height: 20 });
 	this.shape.sensor = true;
 	this.addShape(this.shape);
 };

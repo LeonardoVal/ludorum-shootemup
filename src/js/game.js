@@ -38,6 +38,7 @@ Game.prototype = {
 		this.inputFunction = this.preplayInput;
 		this.deltaAccumulator = 0;
 		this.realElapsedTime = 0; // FIXME sacar, solo se usa para debug
+		// this.world.setBounds(0, 0, CONFIG.WORLD_WIDTH * 24 * CONFIG.PIXEL_RATIO, this.stage.height); // FIXME esto arregla la camara en parte
 	},
 
 	createGUI: function () {
